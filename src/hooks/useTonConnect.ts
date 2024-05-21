@@ -1,6 +1,7 @@
 import { CHAIN } from "@tonconnect/protocol";
 import { Sender, SenderArguments } from "ton-core";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import { loadData } from "../contracts/BatchSender/tact_BatchSender";
 
 export function useTonConnect(): {
   sender: Sender;
@@ -14,6 +15,9 @@ export function useTonConnect(): {
   return {
     sender: {
       send: async (args: SenderArguments) => {
+        // console.log((args.body?.toBoc().toString("base64")));
+        // console.log(loadData(args.body?.asSlice()!));
+        // return;
         tonConnectUI.sendTransaction({
           messages: [
             {
