@@ -16,7 +16,7 @@ export function useBatchSenderContract() {
     const contract = BatchSender.fromAddress(
       Address.parse(
         network === CHAIN.MAINNET
-          ? "EQBPEDbGdwaLv1DKntg9r6SjFIVplSaSJoJ-TVLe_2rqBOmH"
+          ? " EQDH5csTrWj6l7k86FuPaoeXwzGjFPu67wOoKPHrqd4vOX59"
           : "EQB-VO7ve09FULgB9zdyhUHkhN5Im8DaXqs8bBnpLPB9S1rW"
       )
     );
