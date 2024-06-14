@@ -70,13 +70,25 @@ cell $DeployOk$_store_cell((int) v) inline {
 }
 
 ;;
-;; Type: Data
-;; Header: 0xf9a56006
-;; TLB: data#f9a56006 address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = Data
+;; Type: SetFee
+;; Header: 0xc00a7dad
+;; TLB: set_fee#c00a7dad fee:int257 = SetFee
 ;;
 
-(slice, ((cell, cell, cell, int))) $Data$_load(slice sc_0) inline {
-    throw_unless(129, sc_0~load_uint(32) == 4188364806);
+(slice, ((int))) $SetFee$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3221913005);
+    var v'fee = sc_0~load_int(257);
+    return (sc_0, (v'fee));
+}
+
+;;
+;; Type: SendTon
+;; Header: 0x0424f31b
+;; TLB: send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = SendTon
+;;
+
+(slice, ((cell, cell, cell, int))) $SendTon$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 69530395);
     var v'address = sc_0~load_dict();
     var v'amount = sc_0~load_dict();
     var v'comment = sc_0~load_dict();
@@ -84,24 +96,55 @@ cell $DeployOk$_store_cell((int) v) inline {
     return (sc_0, (v'address, v'amount, v'comment, v'length));
 }
 
-((cell, cell, cell, int)) $Data$_tensor_cast((cell, cell, cell, int) v) asm "NOP";
+((cell, cell, cell, int)) $SendTon$_tensor_cast((cell, cell, cell, int) v) asm "NOP";
+
+;;
+;; Type: SendJetton
+;; Header: 0x4f394a32
+;; TLB: send_jetton#4f394a32 contractAddress:address body:dict<int, ^cell> length:int257 amount:int257 = SendJetton
+;;
+
+(slice, ((slice, cell, int, int))) $SendJetton$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1329154610);
+    var v'contractAddress = sc_0~__tact_load_address();
+    var v'body = sc_0~load_dict();
+    var v'length = sc_0~load_int(257);
+    var v'amount = sc_0~load_int(257);
+    return (sc_0, (v'contractAddress, v'body, v'length, v'amount));
+}
+
+((slice, cell, int, int)) $SendJetton$_tensor_cast((slice, cell, int, int) v) asm "NOP";
+
+;;
+;; Type: ChangeContractOwner
+;; Header: 0x109287bc
+;; TLB: change_contract_owner#109287bc newOwner:address = ChangeContractOwner
+;;
+
+(slice, ((slice))) $ChangeContractOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 278038460);
+    var v'newOwner = sc_0~__tact_load_address();
+    return (sc_0, (v'newOwner));
+}
 
 ;;
 ;; Type: BatchSender
 ;;
 
-builder $BatchSender$_store(builder build_0, (slice) v) inline {
-    var (v'deployer) = v;
+builder $BatchSender$_store(builder build_0, (slice, int) v) inline {
+    var (v'deployer, v'fee) = v;
     build_0 = __tact_store_address(build_0, v'deployer);
+    build_0 = build_0.store_int(v'fee, 257);
     return build_0;
 }
 
-(slice, ((slice))) $BatchSender$_load(slice sc_0) inline {
+(slice, ((slice, int))) $BatchSender$_load(slice sc_0) inline {
     var v'deployer = sc_0~__tact_load_address();
-    return (sc_0, (v'deployer));
+    var v'fee = sc_0~load_int(257);
+    return (sc_0, (v'deployer, v'fee));
 }
 
-(slice) $BatchSender$_contract_load() impure inline_ref {
+(slice, int) $BatchSender$_contract_load() impure inline_ref {
     slice $sc = get_data().begin_parse();
     __tact_context_sys = $sc~load_ref();
     int $loaded = $sc~load_int(1);
@@ -114,7 +157,7 @@ builder $BatchSender$_store(builder build_0, (slice) v) inline {
     }
 }
 
-() $BatchSender$_contract_store((slice) v) impure inline {
+() $BatchSender$_contract_store((slice, int) v) impure inline {
     builder b = begin_cell();
     b = b.store_ref(__tact_context_sys);
     b = b.store_int(true, 1);

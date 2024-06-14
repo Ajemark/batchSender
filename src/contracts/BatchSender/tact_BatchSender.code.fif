@@ -11,11 +11,13 @@ PROGRAM{
   DECLPROC __tact_dict_get_int_cell
   DECLPROC __tact_dict_get_int_slice
   DECLPROC __tact_slice_eq_bits
-  DECLPROC __tact_int_to_string
   DECLPROC $Deploy$_load
   DECLPROC $DeployOk$_store
   DECLPROC $DeployOk$_store_cell
-  DECLPROC $Data$_load
+  DECLPROC $SetFee$_load
+  DECLPROC $SendTon$_load
+  DECLPROC $SendJetton$_load
+  DECLPROC $ChangeContractOwner$_load
   DECLPROC $BatchSender$_store
   DECLPROC $BatchSender$_load
   DECLPROC $StateInit$_not_null
@@ -25,18 +27,23 @@ PROGRAM{
   DECLPROC $BatchSender$_contract_store
   DECLPROC $global_send
   DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
-  DECLPROC $BatchSender$_fun_sendBatch
+  DECLPROC $BatchSender$_fun_SendJettonBatch
+  DECLPROC $BatchSender$_fun_sendTonBatch
   DECLPROC $BatchSender$_fun_balance
+  DECLPROC $BatchSender$_fun_fee
   DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
   DECLPROC $BatchSender$_fun_forward
   DECLPROC $BatchSender$_fun_notify
   DECLPROC $SendParameters$_constructor_to_bounce_value_mode
   DECLPROC $DeployOk$_constructor_queryId
-  DECLPROC $BatchSender$_internal_binary_Data
-  DECLPROC %$BatchSender$_internal_empty
+  DECLPROC $BatchSender$_internal_binary_SendTon
+  DECLPROC $BatchSender$_internal_binary_SetFee
+  DECLPROC $BatchSender$_internal_binary_SendJetton
+  DECLPROC $BatchSender$_internal_binary_ChangeContractOwner
   DECLPROC $BatchSender$_internal_text_beb2935a82089b154d32f99c4377aa960aa115366cc2c602755e36b97f505cec
   DECLPROC $BatchSender$_internal_binary_Deploy
   104128 DECLMETHOD %balance
+  123159 DECLMETHOD %fee
   113617 DECLMETHOD supported_interfaces
   121275 DECLMETHOD get_abi_ipfs
   115390 DECLMETHOD lazy_deployment_completed
@@ -127,84 +134,6 @@ PROGRAM{
   __tact_slice_eq_bits PROCINLINE:<{
     SDEQ
   }>
-  __tact_int_to_string PROCREF:<{
-    NEWC
-    OVER
-    0 LESSINT
-    IF:<{
-      45 PUSHINT
-      SWAP
-      8 STU
-      SWAP
-      NEGATE
-      SWAP
-    }>
-    OVER
-    1000000000000000000000000000000 PUSHINTX
-    LESS
-    IF:<{
-      0 PUSHINT
-      DUP
-      1 PUSHINT
-      UNTIL:<{
-        s0 s4 XCHG
-        10 PUSHINT
-        DIVMOD
-        48 ADDCONST
-        s5 PUSH
-        MUL
-        s1 s2 XCHG
-        ADD
-        s0 s4 XCHG
-        8 LSHIFT#
-        s0 s2 XCHG
-        INC
-        OVER
-        0 EQINT
-        s5 s3 s0 XCHG3
-      }>
-      DROP
-      s3 POP
-      3 LSHIFT#
-      STUX
-    }>ELSE<{
-      NIL
-      0 PUSHINT
-      UNTIL:<{
-        s3 PUSH
-        10 PUSHINT
-        MOD
-        s1 s2 XCHG
-        TPUSH
-        SWAP
-        INC
-        s0 s3 XCHG
-        10 PUSHINT
-        DIV
-        DUP
-        0 EQINT
-        s1 s4 XCHG
-      }>
-      s3 POP
-      s2 PUSH
-      DEC
-      s0 s3 XCHG
-      REPEAT:<{
-        s0 s2 PUSH2
-        INDEXVAR
-        48 ADDCONST
-        ROT
-        8 STU
-        s0 s2 XCHG
-        DEC
-        -ROT
-      }>
-      DROP
-      NIP
-    }>
-    ENDC
-    CTOS
-  }>
   $Deploy$_load PROCINLINE:<{
     32 LDU
     SWAP
@@ -226,10 +155,20 @@ PROGRAM{
     $DeployOk$_store INLINECALLDICT
     ENDC
   }>
-  $Data$_load PROCINLINE:<{
+  $SetFee$_load PROCINLINE:<{
     32 LDU
     SWAP
-    4188364806 PUSHINT
+    3221913005 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    257 PUSHINT
+    LDIX
+    SWAP
+  }>
+  $SendTon$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    69530395 PUSHINT
     EQUAL
     129 THROWIFNOT
     LDDICT
@@ -239,11 +178,41 @@ PROGRAM{
     LDIX
     4 -ROLL
   }>
+  $SendJetton$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    1329154610 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDDICT
+    257 PUSHINT
+    LDIX
+    257 PUSHINT
+    LDIX
+    4 -ROLL
+  }>
+  $ChangeContractOwner$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    278038460 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    __tact_load_address INLINECALLDICT
+  }>
   $BatchSender$_store PROCINLINE:<{
+    -ROT
     __tact_store_address INLINECALLDICT
+    257 PUSHINT
+    STIX
   }>
   $BatchSender$_load PROCINLINE:<{
     __tact_load_address INLINECALLDICT
+    SWAP
+    257 PUSHINT
+    LDIX
+    -ROT
   }>
   $StateInit$_not_null PROCINLINE:<{
     DUP
@@ -257,6 +226,7 @@ PROGRAM{
   }>
   $BatchSender$_contract_init PROCREF:<{
     __tact_context_get_sender INLINECALLDICT
+    50000000 PUSHINT
   }>
   $BatchSender$_contract_load PROCREF:<{
     c4 PUSH
@@ -268,7 +238,7 @@ PROGRAM{
     SWAP
     IFJMP:<{
       $BatchSender$_load INLINECALLDICT
-      NIP
+      1 2 BLKDROP2
     }>
     DROP
     MYADDR
@@ -286,7 +256,7 @@ PROGRAM{
     TRUE
     SWAP
     1 STI
-    SWAP
+    -ROT
     $BatchSender$_store INLINECALLDICT
     ENDC
     c4 POP
@@ -399,54 +369,96 @@ PROGRAM{
     PUSHNULL
     PUSHNULL
   }>
-  $BatchSender$_fun_sendBatch PROCREF:<{
-    DUP
+  $BatchSender$_fun_SendJettonBatch PROCREF:<{
+    s4 s1 PUSH2
+    MUL
+    53657 PUSHINT
+    __tact_context_get INLINECALLDICT
+    $Context$_get_value INLINECALLDICT
+    s2 s3 PUXC
+    ADD
+    s1 s3 XCHG
+    GEQ
+    s1 s2 XCHG
+    THROWANYIFNOT
+    2 PUSHINT
+    TRUE
+    B{b5ee9c7241010101001a000030000000004665652066726f6d20546f6e2053707261796572795652d6} B>boc PUSHREF
+    s8 PUSH
+    4 -ROLL
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
     WHILE:<{
       DUP
       0 GTINT
     }>DO<{
-      B{b5ee9c7241010101000700000a66697273745106ec42} B>boc <s PUSHSLICE
-      x{5b44454255475d2046696c6520636f6e7472616374735c62617463685f73656e6465722e746163743a33393a3133} PUSHSLICE
-      STRDUMP
-      DROP
-      STRDUMP
-      DROP
-      s4 PUSH
+      OVER
+      257 PUSHINT
+      s2 PUSH
+      __tact_dict_get_int_cell INLINECALLDICT
+      __tact_not_null INLINECALLDICT
+      10000000 PUSHINT
+      2 PUSHINT
+      TRUE
+      s6 PUSH
+      s0 s4 XCHG
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+      $global_send INLINECALLDICT
+      DEC
+    }>
+    3 BLKDROP
+  }>
+  $BatchSender$_fun_sendTonBatch PROCREF:<{
+    s4 s0 PUSH2
+    MUL
+    257 PUSHINT
+    s4 s(-1) s(-1) PUXCPU
+    1 PUSHINT
+    SWAP
+    __tact_dict_get_int_int INLINECALLDICT
+    DUP
+    ISNULL
+    IFJMP:<{
+      6 BLKDROP
+    }>
+    14110 PUSHINT
+    __tact_context_get INLINECALLDICT
+    $Context$_get_value INLINECALLDICT
+    s0 s2 XCHG
+    __tact_not_null INLINECALLDICT
+    s4 PUSH
+    MUL
+    s3 s(-1) PUXC
+    ADD
+    s1 s2 XCHG
+    GEQ
+    THROWANYIFNOT
+    2 PUSHINT
+    TRUE
+    B{b5ee9c7241010101001a000030000000004665652066726f6d20546f6e2053707261796572795652d6} B>boc PUSHREF
+    s9 PUSH
+    4 -ROLL
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+    WHILE:<{
+      DUP
+      0 GTINT
+    }>DO<{
+      s3 PUSH
       257 PUSHINT
       s2 PUSH
       __tact_dict_get_int_slice INLINECALLDICT
       __tact_not_null INLINECALLDICT
       257 PUSHINT
-      s5 s(-1) s(-1) PUXCPU
+      s4 s(-1) s(-1) PUXCPU
       s4 s(-1) PUXC
       __tact_dict_get_int_int INLINECALLDICT
       __tact_not_null INLINECALLDICT
-      s4 PUSH
+      s3 PUSH
       257 PUSHINT
       s4 PUSH
       __tact_dict_get_int_cell INLINECALLDICT
       __tact_not_null INLINECALLDICT
-      OVER
-      __tact_int_to_string INLINECALLDICT
-      x{5b44454255475d2046696c6520636f6e7472616374735c62617463685f73656e6465722e746163743a34343a3133} PUSHSLICE
-      STRDUMP
-      DROP
-      STRDUMP
-      DROP
-      s3 PUSH
-      __tact_int_to_string INLINECALLDICT
-      x{5b44454255475d2046696c6520636f6e7472616374735c62617463685f73656e6465722e746163743a34353a3133} PUSHSLICE
-      STRDUMP
-      DROP
-      STRDUMP
-      DROP
-      s4 PUSH
-      __tact_int_to_string INLINECALLDICT
-      x{5b44454255475d2046696c6520636f6e7472616374735c62617463685f73656e6465722e746163743a34363a3133} PUSHSLICE
-      STRDUMP
-      DROP
-      STRDUMP
-      DROP
       2 PUSHINT
       TRUE
       ROT
@@ -454,10 +466,13 @@ PROGRAM{
       $global_send INLINECALLDICT
       DEC
     }>
-    5 BLKDROP
+    4 BLKDROP
   }>
   $BatchSender$_fun_balance PROCREF:<{
     __tact_my_balance INLINECALLDICT
+  }>
+  $BatchSender$_fun_fee PROCREF:<{
+    DUP
   }>
   $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
   }>
@@ -498,21 +513,22 @@ PROGRAM{
   }>
   $DeployOk$_constructor_queryId PROCINLINE:<{
   }>
-  $BatchSender$_internal_binary_Data PROCINLINE:<{
-    $BatchSender$_fun_sendBatch INLINECALLDICT
+  $BatchSender$_internal_binary_SendTon PROCINLINE:<{
+    $BatchSender$_fun_sendTonBatch INLINECALLDICT
   }>
-  %$BatchSender$_internal_empty PROCINLINE:<{
-    B{b5ee9c7241010101001000001c66756e647320726563656976656471daf862} B>boc <s PUSHSLICE
-    x{5b44454255475d2046696c6520636f6e7472616374735c62617463685f73656e6465722e746163743a33323a39} PUSHSLICE
-    STRDUMP
-    DROP
-    STRDUMP
-    DROP
+  $BatchSender$_internal_binary_SetFee PROCINLINE:<{
+    NIP
+  }>
+  $BatchSender$_internal_binary_SendJetton PROCINLINE:<{
+    $BatchSender$_fun_SendJettonBatch INLINECALLDICT
+  }>
+  $BatchSender$_internal_binary_ChangeContractOwner PROCINLINE:<{
+    s2 POP
   }>
   $BatchSender$_internal_text_beb2935a82089b154d32f99c4377aa960aa115366cc2c602755e36b97f505cec PROCINLINE:<{
     15509 PUSHINT
     __tact_context_get_sender INLINECALLDICT
-    s2 s(-1) PUXC
+    s3 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     THROWANYIFNOT
     __tact_context_get_sender INLINECALLDICT
@@ -535,7 +551,12 @@ PROGRAM{
   %balance PROC:<{
     $BatchSender$_contract_load INLINECALLDICT
     $BatchSender$_fun_balance INLINECALLDICT
-    NIP
+    2 1 BLKDROP2
+  }>
+  %fee PROC:<{
+    $BatchSender$_contract_load INLINECALLDICT
+    $BatchSender$_fun_fee INLINECALLDICT
+    2 1 BLKDROP2
   }>
   supported_interfaces PROC:<{
     123515602279859691144772641439386770278 PUSHINT
@@ -545,7 +566,7 @@ PROGRAM{
     209474421377847335869795010607481022628 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d503838785065696f5739686838754e35346273564c5351355373633435586675795474465236596d6b485739} PUSHSLICE
+    x{697066733a2f2f516d57524553354777734d4e6f4159704a46523262515253344d704e5162457063714c726f505563653845627263} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH
@@ -571,24 +592,43 @@ PROGRAM{
       32 PLDU
     }>
     DUP
-    4188364806 PUSHINT
+    69530395 PUSHINT
     EQUAL
     IFJMP:<{
       DROP
-      $Data$_load INLINECALLDICT
+      $SendTon$_load INLINECALLDICT
       1 4 BLKDROP2
-      $BatchSender$_internal_binary_Data INLINECALLDICT
+      $BatchSender$_internal_binary_SendTon INLINECALLDICT
       TRUE
     }>
     DUP
-    0 EQINT
-    s2 PUSH
-    SBITS
-    33 LESSINT
-    AND
+    3221913005 PUSHINT
+    EQUAL
     IFJMP:<{
-      2DROP
-      %$BatchSender$_internal_empty INLINECALLDICT
+      DROP
+      $SetFee$_load INLINECALLDICT
+      NIP
+      $BatchSender$_internal_binary_SetFee INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    1329154610 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $SendJetton$_load INLINECALLDICT
+      1 4 BLKDROP2
+      $BatchSender$_internal_binary_SendJetton INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    278038460 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $ChangeContractOwner$_load INLINECALLDICT
+      NIP
+      $BatchSender$_internal_binary_ChangeContractOwner INLINECALLDICT
       TRUE
     }>
     DUP
@@ -635,7 +675,7 @@ PROGRAM{
     s0 s2 XCHG
     __tact_context_sender SETGLOB
     $BatchSender$_contract_load INLINECALLDICT
-    -ROT
+    2SWAP
     $BatchSender$_contract_router_internal INLINECALLDICT
     130 THROWIFNOT
     $BatchSender$_contract_store INLINECALLDICT

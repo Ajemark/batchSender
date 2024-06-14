@@ -1,9 +1,9 @@
 # TACT Compilation Report
 Contract: BatchSender
-BOC Size: 1372 bytes
+BOC Size: 1324 bytes
 
 # Types
-Total Types: 8
+Total Types: 10
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -29,18 +29,28 @@ Signature: `DeployOk{queryId:uint64}`
 TLB: `factory_deploy#6d0ff13b queryId:uint64 cashback:address = FactoryDeploy`
 Signature: `FactoryDeploy{queryId:uint64,cashback:address}`
 
-## TxInfo
-TLB: `_ amount:int257 to:address body:^string = TxInfo`
-Signature: `TxInfo{amount:int257,to:address,body:^string}`
+## SetFee
+TLB: `set_fee#c00a7dad fee:int257 = SetFee`
+Signature: `SetFee{fee:int257}`
 
-## Data
-TLB: `data#f9a56006 address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = Data`
-Signature: `Data{address:dict<int, address>,amount:dict<int, int>,comment:dict<int, ^cell>,length:int257}`
+## SendTon
+TLB: `send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = SendTon`
+Signature: `SendTon{address:dict<int, address>,amount:dict<int, int>,comment:dict<int, ^cell>,length:int257}`
+
+## SendJetton
+TLB: `send_jetton#4f394a32 contractAddress:address body:dict<int, ^cell> length:int257 amount:int257 = SendJetton`
+Signature: `SendJetton{contractAddress:address,body:dict<int, ^cell>,length:int257,amount:int257}`
+
+## ChangeContractOwner
+TLB: `change_contract_owner#109287bc newOwner:address = ChangeContractOwner`
+Signature: `ChangeContractOwner{newOwner:address}`
 
 # Get Methods
-Total Get Methods: 1
+Total Get Methods: 2
 
 ## balance
+
+## fee
 
 # Error Codes
 2: Stack undeflow
@@ -67,4 +77,6 @@ Total Get Methods: 1
 135: Code of a contract was not found
 136: Invalid address
 137: Masterchain support is not enabled for this contract
+14110: 400
 15509: Only deployer is allowed to withdraw
+53657: 401

@@ -39,9 +39,6 @@ slice __tact_dict_get_int_slice(cell d, int kl, int k) inline;
 ;; __tact_slice_eq_bits
 int __tact_slice_eq_bits(slice a, slice b) inline;
 
-;; __tact_int_to_string
-slice __tact_int_to_string(int src) inline_ref;
-
 ;; $Deploy$_load
 (slice, ((int))) $Deploy$_load(slice sc_0) inline;
 
@@ -51,14 +48,23 @@ builder $DeployOk$_store(builder build_0, (int) v) inline;
 ;; $DeployOk$_store_cell
 cell $DeployOk$_store_cell((int) v) inline;
 
-;; $Data$_load
-(slice, ((cell, cell, cell, int))) $Data$_load(slice sc_0) inline;
+;; $SetFee$_load
+(slice, ((int))) $SetFee$_load(slice sc_0) inline;
+
+;; $SendTon$_load
+(slice, ((cell, cell, cell, int))) $SendTon$_load(slice sc_0) inline;
+
+;; $SendJetton$_load
+(slice, ((slice, cell, int, int))) $SendJetton$_load(slice sc_0) inline;
+
+;; $ChangeContractOwner$_load
+(slice, ((slice))) $ChangeContractOwner$_load(slice sc_0) inline;
 
 ;; $BatchSender$_store
-builder $BatchSender$_store(builder build_0, (slice) v) inline;
+builder $BatchSender$_store(builder build_0, (slice, int) v) inline;
 
 ;; $BatchSender$_load
-(slice, ((slice))) $BatchSender$_load(slice sc_0) inline;
+(slice, ((slice, int))) $BatchSender$_load(slice sc_0) inline;
 
 ;; $StateInit$_not_null
 ((cell, cell)) $StateInit$_not_null(tuple v) inline;
@@ -67,13 +73,13 @@ builder $BatchSender$_store(builder build_0, (slice) v) inline;
 _ $Context$_get_value((int, slice, int, slice) v) inline;
 
 ;; $BatchSender$_contract_init
-(slice) $BatchSender$_contract_init() impure inline_ref;
+(slice, int) $BatchSender$_contract_init() impure inline_ref;
 
 ;; $BatchSender$_contract_load
-(slice) $BatchSender$_contract_load() impure inline_ref;
+(slice, int) $BatchSender$_contract_load() impure inline_ref;
 
 ;; $BatchSender$_contract_store
-() $BatchSender$_contract_store((slice) v) impure inline;
+() $BatchSender$_contract_store((slice, int) v) impure inline;
 
 ;; $global_send
 () $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline_ref;
@@ -81,20 +87,26 @@ _ $Context$_get_value((int, slice, int, slice) v) inline;
 ;; $SendParameters$_constructor_to_value_mode_bounce_body
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice to, int value, int mode, int bounce, cell body) inline;
 
-;; $BatchSender$_fun_sendBatch
-((slice), ()) $BatchSender$_fun_sendBatch((slice) $self, (cell, cell, cell, int) $data) impure inline_ref;
+;; $BatchSender$_fun_SendJettonBatch
+((slice, int), ()) $BatchSender$_fun_SendJettonBatch((slice, int) $self, (slice, cell, int, int) $data) impure inline_ref;
+
+;; $BatchSender$_fun_sendTonBatch
+((slice, int), ()) $BatchSender$_fun_sendTonBatch((slice, int) $self, (cell, cell, cell, int) $data) impure inline_ref;
 
 ;; $BatchSender$_fun_balance
-((slice), int) $BatchSender$_fun_balance((slice) $self) impure inline_ref;
+((slice, int), int) $BatchSender$_fun_balance((slice, int) $self) impure inline_ref;
+
+;; $BatchSender$_fun_fee
+((slice, int), int) $BatchSender$_fun_fee((slice, int) $self) impure inline_ref;
 
 ;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline;
 
 ;; $BatchSender$_fun_forward
-((slice), ()) $BatchSender$_fun_forward((slice) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref;
+((slice, int), ()) $BatchSender$_fun_forward((slice, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref;
 
 ;; $BatchSender$_fun_notify
-((slice), ()) $BatchSender$_fun_notify((slice) $self, cell $body) impure inline;
+((slice, int), ()) $BatchSender$_fun_notify((slice, int) $self, cell $body) impure inline;
 
 ;; $SendParameters$_constructor_to_bounce_value_mode
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_bounce_value_mode(slice to, int bounce, int value, int mode) inline;

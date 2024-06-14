@@ -377,68 +377,62 @@ function dictValueParserFactoryDeploy(): DictionaryValue<FactoryDeploy> {
   };
 }
 
-export type TxInfo = {
-  $$type: "TxInfo";
-  amount: bigint;
-  to: Address;
-  body: string;
+export type SetFee = {
+  $$type: "SetFee";
+  fee: bigint;
 };
 
-export function storeTxInfo(src: TxInfo) {
+export function storeSetFee(src: SetFee) {
   return (builder: Builder) => {
     let b_0 = builder;
-    b_0.storeInt(src.amount, 257);
-    b_0.storeAddress(src.to);
-    b_0.storeStringRefTail(src.body);
+    b_0.storeUint(3221913005, 32);
+    b_0.storeInt(src.fee, 257);
   };
 }
 
-export function loadTxInfo(slice: Slice) {
+export function loadSetFee(slice: Slice) {
   let sc_0 = slice;
-  let _amount = sc_0.loadIntBig(257);
-  let _to = sc_0.loadAddress();
-  let _body = sc_0.loadStringRefTail();
-  return { $$type: "TxInfo" as const, amount: _amount, to: _to, body: _body };
+  if (sc_0.loadUint(32) !== 3221913005) {
+    throw Error("Invalid prefix");
+  }
+  let _fee = sc_0.loadIntBig(257);
+  return { $$type: "SetFee" as const, fee: _fee };
 }
 
-function loadTupleTxInfo(source: TupleReader) {
-  let _amount = source.readBigNumber();
-  let _to = source.readAddress();
-  let _body = source.readString();
-  return { $$type: "TxInfo" as const, amount: _amount, to: _to, body: _body };
+function loadTupleSetFee(source: TupleReader) {
+  let _fee = source.readBigNumber();
+  return { $$type: "SetFee" as const, fee: _fee };
 }
 
-function storeTupleTxInfo(source: TxInfo) {
+function storeTupleSetFee(source: SetFee) {
   let builder = new TupleBuilder();
-  builder.writeNumber(source.amount);
-  builder.writeAddress(source.to);
-  builder.writeString(source.body);
+  builder.writeNumber(source.fee);
   return builder.build();
 }
 
-function dictValueParserTxInfo(): DictionaryValue<TxInfo> {
+function dictValueParserSetFee(): DictionaryValue<SetFee> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeTxInfo(src)).endCell());
+      buidler.storeRef(beginCell().store(storeSetFee(src)).endCell());
     },
     parse: (src) => {
-      return loadTxInfo(src.loadRef().beginParse());
+      return loadSetFee(src.loadRef().beginParse());
     },
   };
 }
 
-export type Data = {
-  $$type: "Data";
+export type SendTon = {
+  $$type: "SendTon";
   address: Dictionary<bigint, Address>;
   amount: Dictionary<bigint, bigint>;
   comment: Dictionary<bigint, Cell>;
   length: bigint;
 };
 
-export function storeData(src: Data) {
+export function storeSendTon(src: SendTon) {
   return (builder: Builder) => {
     let b_0 = builder;
-    b_0.storeUint(4188364806, 32);
+    b_0.storeUint(69530395, 32);
     b_0.storeDict(
       src.address,
       Dictionary.Keys.BigInt(257),
@@ -458,9 +452,9 @@ export function storeData(src: Data) {
   };
 }
 
-export function loadData(slice: Slice) {
+export function loadSendTon(slice: Slice) {
   let sc_0 = slice;
-  if (sc_0.loadUint(32) !== 4188364806) {
+  if (sc_0.loadUint(32) !== 69530395) {
     throw Error("Invalid prefix");
   }
   let _address = Dictionary.load(
@@ -480,7 +474,7 @@ export function loadData(slice: Slice) {
   );
   let _length = sc_0.loadIntBig(257);
   return {
-    $$type: "Data" as const,
+    $$type: "SendTon" as const,
     address: _address,
     amount: _amount,
     comment: _comment,
@@ -488,7 +482,7 @@ export function loadData(slice: Slice) {
   };
 }
 
-function loadTupleData(source: TupleReader) {
+function loadTupleSendTon(source: TupleReader) {
   let _address = Dictionary.loadDirect(
     Dictionary.Keys.BigInt(257),
     Dictionary.Values.Address(),
@@ -506,7 +500,7 @@ function loadTupleData(source: TupleReader) {
   );
   let _length = source.readBigNumber();
   return {
-    $$type: "Data" as const,
+    $$type: "SendTon" as const,
     address: _address,
     amount: _amount,
     comment: _comment,
@@ -514,7 +508,7 @@ function loadTupleData(source: TupleReader) {
   };
 }
 
-function storeTupleData(source: Data) {
+function storeTupleSendTon(source: SendTon) {
   let builder = new TupleBuilder();
   builder.writeCell(
     source.address.size > 0
@@ -553,13 +547,152 @@ function storeTupleData(source: Data) {
   return builder.build();
 }
 
-function dictValueParserData(): DictionaryValue<Data> {
+function dictValueParserSendTon(): DictionaryValue<SendTon> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeData(src)).endCell());
+      buidler.storeRef(beginCell().store(storeSendTon(src)).endCell());
     },
     parse: (src) => {
-      return loadData(src.loadRef().beginParse());
+      return loadSendTon(src.loadRef().beginParse());
+    },
+  };
+}
+
+export type SendJetton = {
+  $$type: "SendJetton";
+  contractAddress: Address;
+  body: Dictionary<bigint, Cell>;
+  length: bigint;
+  amount: bigint;
+};
+
+export function storeSendJetton(src: SendJetton) {
+  return (builder: Builder) => {
+    let b_0 = builder;
+    b_0.storeUint(1329154610, 32);
+    b_0.storeAddress(src.contractAddress);
+    b_0.storeDict(
+      src.body,
+      Dictionary.Keys.BigInt(257),
+      Dictionary.Values.Cell()
+    );
+    b_0.storeInt(src.length, 257);
+    b_0.storeInt(src.amount, 257);
+  };
+}
+
+export function loadSendJetton(slice: Slice) {
+  let sc_0 = slice;
+  if (sc_0.loadUint(32) !== 1329154610) {
+    throw Error("Invalid prefix");
+  }
+  let _contractAddress = sc_0.loadAddress();
+  let _body = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    Dictionary.Values.Cell(),
+    sc_0
+  );
+  let _length = sc_0.loadIntBig(257);
+  let _amount = sc_0.loadIntBig(257);
+  return {
+    $$type: "SendJetton" as const,
+    contractAddress: _contractAddress,
+    body: _body,
+    length: _length,
+    amount: _amount,
+  };
+}
+
+function loadTupleSendJetton(source: TupleReader) {
+  let _contractAddress = source.readAddress();
+  let _body = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    Dictionary.Values.Cell(),
+    source.readCellOpt()
+  );
+  let _length = source.readBigNumber();
+  let _amount = source.readBigNumber();
+  return {
+    $$type: "SendJetton" as const,
+    contractAddress: _contractAddress,
+    body: _body,
+    length: _length,
+    amount: _amount,
+  };
+}
+
+function storeTupleSendJetton(source: SendJetton) {
+  let builder = new TupleBuilder();
+  builder.writeAddress(source.contractAddress);
+  builder.writeCell(
+    source.body.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.body,
+            Dictionary.Keys.BigInt(257),
+            Dictionary.Values.Cell()
+          )
+          .endCell()
+      : null
+  );
+  builder.writeNumber(source.length);
+  builder.writeNumber(source.amount);
+  return builder.build();
+}
+
+function dictValueParserSendJetton(): DictionaryValue<SendJetton> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storeSendJetton(src)).endCell());
+    },
+    parse: (src) => {
+      return loadSendJetton(src.loadRef().beginParse());
+    },
+  };
+}
+
+export type ChangeContractOwner = {
+  $$type: "ChangeContractOwner";
+  newOwner: Address;
+};
+
+export function storeChangeContractOwner(src: ChangeContractOwner) {
+  return (builder: Builder) => {
+    let b_0 = builder;
+    b_0.storeUint(278038460, 32);
+    b_0.storeAddress(src.newOwner);
+  };
+}
+
+export function loadChangeContractOwner(slice: Slice) {
+  let sc_0 = slice;
+  if (sc_0.loadUint(32) !== 278038460) {
+    throw Error("Invalid prefix");
+  }
+  let _newOwner = sc_0.loadAddress();
+  return { $$type: "ChangeContractOwner" as const, newOwner: _newOwner };
+}
+
+function loadTupleChangeContractOwner(source: TupleReader) {
+  let _newOwner = source.readAddress();
+  return { $$type: "ChangeContractOwner" as const, newOwner: _newOwner };
+}
+
+function storeTupleChangeContractOwner(source: ChangeContractOwner) {
+  let builder = new TupleBuilder();
+  builder.writeAddress(source.newOwner);
+  return builder.build();
+}
+
+function dictValueParserChangeContractOwner(): DictionaryValue<ChangeContractOwner> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(
+        beginCell().store(storeChangeContractOwner(src)).endCell()
+      );
+    },
+    parse: (src) => {
+      return loadChangeContractOwner(src.loadRef().beginParse());
     },
   };
 }
@@ -576,10 +709,10 @@ function initBatchSender_init_args(src: BatchSender_init_args) {
 
 async function BatchSender_init() {
   const __code = Cell.fromBase64(
-    "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"
+    "te6ccgECHAEABSAAART/APSkE/S88sgLAQIBYgIDAtrQAdDTAwFxsKMB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiFRQUwNvBPhhAvhi2zxa2zzy4ILI+EMBzH8BygBZWSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFoEBAc8Aye1UGQQCAVgQEQTw7aLt+wGSMH/gcCHXScIflTAg1wsf3iCCEAQk8xu6jqAw0x8BghAEJPMbuvLggfQE9AT0BIEBAdcAVTBsFNs8f+AgghDACn2tuo4XMNMfAYIQwAp9rbry4IGBAQHXAAExMX/gIIIQTzlKMrrjAiCCEBCSh7y64wIgBQYHCAOcU0CogQEBVFQAcQFBM/QMb6GUAdcAMJJbbeIgbpJfBuCBNx74QW8kE18DAiBu8tCAJKhSMKASvvL0cn+IKVUwFEMwbW3bPJMgwgCK6F8ECw4JAYIw0x8BghBPOUoyuvLggfpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgB9ASBAQHXAIEBAdcAVTBsFNs8fwoAYDDTHwGCEBCSh7y68uCB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiDEyfwJyghCUapi2uo6oMNMfAYIQlGqYtrry4IHTPwExyAGCEK/5D1dYyx/LP8n4QgFwbds8f+DAAJEw4w1wDA0BmiOBAQEiWfQMb6GSMG3fIG7y0ICBAQFUVABSQEEz9AxvoZQB1wAwkltt4iBu8tCAI4EBASRZ9A1voZIwbd8gbvLQgHJ/WBRDMG1t2zylDgOgU0GoggDRmfhBbyQTXwNSJKATvhLy9HJ/iChVMBRDMG1t2zyTIMIAjqQhgQEBIln0DW+hkjBt3yBu8tCAggiYloByfyYEFEMwbW3bPKXoXwMLDg4AMAAAAABGZWUgZnJvbSBUb24gU3ByYXllcgE6bW0ibrOZWyBu8tCAbyIBkTLiECRwAwSAQlAj2zwOAaj5AYLwvrKTWoIImxVNMvmcQ3eqlgqhFTZswsYCdV42uX9QXOy6jqyBPJX4QlIwxwXy9PhCf/gnbxD4QW8kE18DoYIImJaAoYBCECNtbW3bPH/bMeAOAcrIcQHKAVAHAcoAcAHKAlAFINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WUAP6AnABymgjbrORf5MkbrPilzMzAXABygDjDSFus5x/AcoAASBu8tCAAcyVMXABygDiyQH7AA8AmH8BygDIcAHKAHABygAkbrOdfwHKAAQgbvLQgFAEzJY0A3ABygDiJG6znX8BygAEIG7y0IBQBMyWNANwAcoA4nABygACfwHKAALJWMwCASASEwIBIBUWAhG22Btnm2eNhDAZFAC5t3owTgudh6ullc9j0J2HOslQo2zQThO6xqWlbI+WZFp15b++LEcwTgQKuANwDOxymcsHVcjktlhwTgN6k73yqLLeOOp6e8CrOGTQThOy6ctWadluZ0HSzbKM3RSQAAj4J28QAgEgFxgCEbQi+2ebZ42EMBkaABGwr7tRNDSAAGAAdbJu40NWlwZnM6Ly9RbVdSRVM1R3dzTU5vQVlwSkZSMmJRUlM0TXBOUWJFcGNxTHJvUFVjZThFYnJjggAYbtRNDUAfhj0gABjij6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAYEBAdcAWWwS4DD4KNcLCoMJuvLgids8GwACIAAO+EKCCvrwgA=="
   );
   const __system = Cell.fromBase64(
-    "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"
+    "te6cckECHgEABSoAAQHAAQEFoAFZAgEU/wD0pBP0vPLICwMCAWIEEQLa0AHQ0wMBcbCjAfpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IhUUFMDbwT4YQL4Yts8Wts88uCCyPhDAcx/AcoAWVkg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxaBAQHPAMntVBsFBPDtou37AZIwf+BwIddJwh+VMCDXCx/eIIIQBCTzG7qOoDDTHwGCEAQk8xu68uCB9AT0BPQEgQEB1wBVMGwU2zx/4CCCEMAKfa26jhcw0x8BghDACn2tuvLggYEBAdcAATExf+AgghBPOUoyuuMCIIIQEJKHvLrjAiAGCAsMA5xTQKiBAQFUVABxAUEz9AxvoZQB1wAwkltt4iBukl8G4IE3HvhBbyQTXwMCIG7y0IAkqFIwoBK+8vRyf4gpVTAUQzBtbds8kyDCAIroXwQKDwcBmiOBAQEiWfQMb6GSMG3fIG7y0ICBAQFUVABSQEEz9AxvoZQB1wAwkltt4iBu8tCAI4EBASRZ9A1voZIwbd8gbvLQgHJ/WBRDMG1t2zylDwGCMNMfAYIQTzlKMrry4IH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAfQEgQEB1wCBAQHXAFUwbBTbPH8JA6BTQaiCANGZ+EFvJBNfA1IkoBO+EvL0cn+IKFUwFEMwbW3bPJMgwgCOpCGBAQEiWfQNb6GSMG3fIG7y0ICCCJiWgHJ/JgQUQzBtbds8pehfAwoPDwAwAAAAAEZlZSBmcm9tIFRvbiBTcHJheWVyAGAw0x8BghAQkoe8uvLggfpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgxMn8CcoIQlGqYtrqOqDDTHwGCEJRqmLa68uCB0z8BMcgBghCv+Q9XWMsfyz/J+EIBcG3bPH/gwACRMOMNcA0OATptbSJus5lbIG7y0IBvIgGRMuIQJHADBIBCUCPbPA8BqPkBgvC+spNaggibFU0y+ZxDd6qWCqEVNmzCxgJ1Xja5f1Bc7LqOrIE8lfhCUjDHBfL0+EJ/+CdvEPhBbyQTXwOhggiYloChgEIQI21tbds8f9sx4A8ByshxAcoBUAcBygBwAcoCUAUg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxZQA/oCcAHKaCNus5F/kyRus+KXMzMBcAHKAOMNIW6znH8BygABIG7y0IABzJUxcAHKAOLJAfsAEACYfwHKAMhwAcoAcAHKACRus51/AcoABCBu8tCAUATMljQDcAHKAOIkbrOdfwHKAAQgbvLQgFAEzJY0A3ABygDicAHKAAJ/AcoAAslYzAIBWBIWAgEgExUCEbbYG2ebZ42EMBsUAAj4J28QALm3ejBOC52Hq6WVz2PQnYc6yVCjbNBOE7rGpaVsj5ZkWnXlv74sRzBOBAq4A3AM7HKZywdVyOS2WHBOA3qTvfKost446np7wKs4ZNBOE7Lpy1Zp2W5nQdLNsozdFJACASAXGgIBIBgZABGwr7tRNDSAAGAAdbJu40NWlwZnM6Ly9RbVdSRVM1R3dzTU5vQVlwSkZSMmJRUlM0TXBOUWJFcGNxTHJvUFVjZThFYnJjggAhG0Ivtnm2eNhDAbHQGG7UTQ1AH4Y9IAAY4o+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiAGBAQHXAFlsEuAw+CjXCwqDCbry4InbPBwADvhCggr68IAAAiBuW5Wh"
   );
   let builder = beginCell();
   builder.storeRef(__system);
@@ -614,7 +747,9 @@ const BatchSender_errors: { [key: number]: { message: string } } = {
   135: { message: `Code of a contract was not found` },
   136: { message: `Invalid address` },
   137: { message: `Masterchain support is not enabled for this contract` },
+  14110: { message: `400` },
   15509: { message: `Only deployer is allowed to withdraw` },
+  53657: { message: `401` },
 };
 
 const BatchSender_types: ABIType[] = [
@@ -705,26 +840,18 @@ const BatchSender_types: ABIType[] = [
     ],
   },
   {
-    name: "TxInfo",
-    header: null,
+    name: "SetFee",
+    header: 3221913005,
     fields: [
       {
-        name: "amount",
+        name: "fee",
         type: { kind: "simple", type: "int", optional: false, format: 257 },
-      },
-      {
-        name: "to",
-        type: { kind: "simple", type: "address", optional: false },
-      },
-      {
-        name: "body",
-        type: { kind: "simple", type: "string", optional: false },
       },
     ],
   },
   {
-    name: "Data",
-    header: 4188364806,
+    name: "SendTon",
+    header: 69530395,
     fields: [
       { name: "address", type: { kind: "dict", key: "int", value: "address" } },
       { name: "amount", type: { kind: "dict", key: "int", value: "int" } },
@@ -738,6 +865,38 @@ const BatchSender_types: ABIType[] = [
       },
     ],
   },
+  {
+    name: "SendJetton",
+    header: 1329154610,
+    fields: [
+      {
+        name: "contractAddress",
+        type: { kind: "simple", type: "address", optional: false },
+      },
+      {
+        name: "body",
+        type: { kind: "dict", key: "int", value: "cell", valueFormat: "ref" },
+      },
+      {
+        name: "length",
+        type: { kind: "simple", type: "int", optional: false, format: 257 },
+      },
+      {
+        name: "amount",
+        type: { kind: "simple", type: "int", optional: false, format: 257 },
+      },
+    ],
+  },
+  {
+    name: "ChangeContractOwner",
+    header: 278038460,
+    fields: [
+      {
+        name: "newOwner",
+        type: { kind: "simple", type: "address", optional: false },
+      },
+    ],
+  },
 ];
 
 const BatchSender_getters: ABIGetter[] = [
@@ -746,11 +905,21 @@ const BatchSender_getters: ABIGetter[] = [
     arguments: [],
     returnType: { kind: "simple", type: "int", optional: false, format: 257 },
   },
+  {
+    name: "fee",
+    arguments: [],
+    returnType: { kind: "simple", type: "int", optional: false, format: 257 },
+  },
 ];
 
 const BatchSender_receivers: ABIReceiver[] = [
-  { receiver: "internal", message: { kind: "typed", type: "Data" } },
-  { receiver: "internal", message: { kind: "empty" } },
+  { receiver: "internal", message: { kind: "typed", type: "SendTon" } },
+  { receiver: "internal", message: { kind: "typed", type: "SetFee" } },
+  { receiver: "internal", message: { kind: "typed", type: "SendJetton" } },
+  {
+    receiver: "internal",
+    message: { kind: "typed", type: "ChangeContractOwner" },
+  },
   { receiver: "internal", message: { kind: "text", text: "withdraw safe" } },
   { receiver: "internal", message: { kind: "typed", type: "Deploy" } },
 ];
@@ -788,19 +957,46 @@ export class BatchSender implements Contract {
     provider: ContractProvider,
     via: Sender,
     args: { value: bigint; bounce?: boolean | null | undefined },
-    message: Data | null | "withdraw safe" | Deploy
+    message:
+      | SendTon
+      | SetFee
+      | SendJetton
+      | ChangeContractOwner
+      | "withdraw safe"
+      | Deploy
   ) {
     let body: Cell | null = null;
     if (
       message &&
       typeof message === "object" &&
       !(message instanceof Slice) &&
-      message.$$type === "Data"
+      message.$$type === "SendTon"
     ) {
-      body = beginCell().store(storeData(message)).endCell();
+      body = beginCell().store(storeSendTon(message)).endCell();
     }
-    if (message === null) {
-      body = new Cell();
+    if (
+      message &&
+      typeof message === "object" &&
+      !(message instanceof Slice) &&
+      message.$$type === "SetFee"
+    ) {
+      body = beginCell().store(storeSetFee(message)).endCell();
+    }
+    if (
+      message &&
+      typeof message === "object" &&
+      !(message instanceof Slice) &&
+      message.$$type === "SendJetton"
+    ) {
+      body = beginCell().store(storeSendJetton(message)).endCell();
+    }
+    if (
+      message &&
+      typeof message === "object" &&
+      !(message instanceof Slice) &&
+      message.$$type === "ChangeContractOwner"
+    ) {
+      body = beginCell().store(storeChangeContractOwner(message)).endCell();
     }
     if (message === "withdraw safe") {
       body = beginCell().storeUint(0, 32).storeStringTail(message).endCell();
@@ -816,12 +1012,20 @@ export class BatchSender implements Contract {
     if (body === null) {
       throw new Error("Invalid message type");
     }
+
     await provider.internal(via, { ...args, body: body });
   }
 
   async getBalance(provider: ContractProvider) {
     let builder = new TupleBuilder();
     let source = (await provider.get("balance", builder.build())).stack;
+    let result = source.readBigNumber();
+    return result;
+  }
+
+  async getFee(provider: ContractProvider) {
+    let builder = new TupleBuilder();
+    let source = (await provider.get("fee", builder.build())).stack;
     let result = source.readBigNumber();
     return result;
   }
