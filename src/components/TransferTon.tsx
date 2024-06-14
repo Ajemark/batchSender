@@ -138,7 +138,7 @@ export function TransferTon() {
             .store(
               storeJettonTransferMessage({
                 queryId: 0n,
-                amount: BigInt(tonAmount.toString()),
+                amount: toNano(tonAmount.toString()),
                 destination: Address.parse(d),
                 responseDestination: Address.parse(senderAddress),
                 customPayload: null,
