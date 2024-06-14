@@ -233,7 +233,7 @@ export function TransferTon() {
             if (type == "Jetton") sendJetton();
           }}
         >
-          Transfer
+          SPRAY
         </Button>
       </FlexBoxCol>
       {formError && (
