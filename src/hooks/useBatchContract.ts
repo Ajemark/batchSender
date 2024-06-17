@@ -21,15 +21,17 @@ export function useBatchSenderContract() {
       Address.parse(
         network === CHAIN.MAINNET
           ? "EQDH5csTrWj6l7k86FuPaoeXwzGjFPu67wOoKPHrqd4vOX59"
-          : "EQCnvlf4yVIuQtIrv278kiAhRRalEXJVMHZ20iiVLd42Zad5"
+          : "kQBJ771xdp_fe8ZsO1bARi3LRATLY_HbUA399LSUs_5aH6w6"
       )
     );
-    // : "EQB-VO7ve09FULgB9zdyhUHkhN5Im8DaXqs8bBnpLPB9S1rW"
+    // : "EQCnvlf4yVIuQtIrv278kiAhRRalEXJVMHZ20iiVLd42Zad5"
     return client.open(contract) as OpenedContract<BatchSender>;
   }, [client]);
 
   return {
     caAddress: batchSenderContract?.address.toString(),
+    myJettonAddress: (address: string) =>
+      batchSenderContract?.getMyJettonWalletAddress(Address.parse(address)),
     sendBatchTon: (data: any) => {
       const message: SendTon = {
         $$type: "SendTon",

@@ -20,27 +20,6 @@ builder __tact_store_address(builder b, slice address) inline {
     return b.store_slice(__tact_verify_address(address));
 }
 
-slice __tact_create_address(int chain, int hash) inline {
-    var b = begin_cell();
-    b = b.store_uint(2, 2);
-    b = b.store_uint(0, 1);
-    b = b.store_int(chain, 8);
-    b = b.store_uint(hash, 256);
-    var addr = b.end_cell().begin_parse();
-    return __tact_verify_address(addr);
-}
-
-slice __tact_compute_contract_address(int chain, cell code, cell data) inline {
-    var b = begin_cell();
-    b = b.store_uint(0, 2);
-    b = b.store_uint(3, 2);
-    b = b.store_uint(0, 1);
-    b = b.store_ref(code);
-    b = b.store_ref(data);
-    var hash = cell_hash(b.end_cell());
-    return __tact_create_address(chain, hash);
-}
-
 int __tact_my_balance() inline {
     return pair_first(get_balance());
 }
@@ -61,53 +40,11 @@ builder __tact_store_bool(builder b, int v) inline {
     return b.store_int(v, 1);
 }
 
-int __tact_dict_get_int_int(cell d, int kl, int k, int vl) inline {
-    var (r, ok) = idict_get?(d, kl, k);
-    if (ok) {
-        return r~load_int(vl);
-    } else {
-        return null();
-    }
-}
-
-cell __tact_dict_get_int_cell(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get_ref?(d, kl, k);
-    if (ok) {
-        return r;
-    } else {
-        return null();
-    }
-}
-
-slice __tact_dict_get_int_slice(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get?(d, kl, k);
-    if (ok) {
-        return r;
-    } else {
-        return null();
-    }
-}
-
 int __tact_slice_eq_bits(slice a, slice b) inline {
     return equal_slice_bits(a, b);
 }
 
-cell __tact_dict_set_code(cell dict, int id, cell code) inline {
-    return udict_set_ref(dict, 16, id, code);
-}
-
-cell __tact_dict_get_code(cell dict, int id) inline {
-    var (data, ok) = udict_get_ref?(dict, 16, id);
-    throw_unless(135, ok);
-    return data;
-}
-
 forall X0, X1 -> (X0, X1) __tact_tuple_destroy_2(tuple v) asm "2 UNTUPLE";
-
-slice $global_contractAddress((cell, cell) $s) impure inline {
-    var (($s'code, $s'data)) = $s;
-    return __tact_compute_contract_address(0, $s'code, $s'data);
-}
 
 () $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline_ref {
     var (($params'bounce, $params'to, $params'value, $params'mode, $params'body, $params'code, $params'data)) = $params;
@@ -152,8 +89,8 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
     send_raw_message($c, $params'mode);
 }
 
-((slice, int), ()) $BatchSender$_fun_forward((slice, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
+((slice, slice), ()) $BatchJettonSender$_fun_forward((slice, slice) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref {
+    var (($self'parent, $self'owner)) = $self;
     var ($init) = $init;
     cell $code = null();
     cell $data = null();
@@ -169,15 +106,15 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
         if (($balanceBeforeMessage < 0)) {
             raw_reserve(0, 0);
             $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (128 | 2), $body, $code, $data));
-            return (($self'deployer, $self'fee), ());
+            return (($self'parent, $self'owner), ());
         }
     }
     $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (64 | 2), $body, $code, $data));
-    return (($self'deployer, $self'fee), ());
+    return (($self'parent, $self'owner), ());
 }
 
-((slice, int), ()) $BatchSender$_fun_notify((slice, int) $self, cell $body) impure inline {
-    var (($self'deployer, $self'fee)) = $self;
-    ($self'deployer, $self'fee)~$BatchSender$_fun_forward(__tact_context_get_sender(), $body, false, null());
-    return (($self'deployer, $self'fee), ());
+((slice, slice), ()) $BatchJettonSender$_fun_notify((slice, slice) $self, cell $body) impure inline {
+    var (($self'parent, $self'owner)) = $self;
+    ($self'parent, $self'owner)~$BatchJettonSender$_fun_forward(__tact_context_get_sender(), $body, false, null());
+    return (($self'parent, $self'owner), ());
 }

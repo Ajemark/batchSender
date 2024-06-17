@@ -18,12 +18,14 @@ export function TransferTon() {
   const senderAddress = useTonAddress();
   const [jettonContractAddress, setJettonContractAddress] = useState("");
   const [jettonWalletAddress, setJettonWalletAddress] = useState("");
+  const [caJettonWalletAddress, setCAJettonWalletAddress]: any = useState();
 
   const tonClient = useTonClient();
 
   const { connected } = useTonConnect();
 
-  const { sendBatchTon, sendBatchJetton, caAddress } = useBatchSenderContract();
+  const { sendBatchTon, sendBatchJetton, caAddress, myJettonAddress } =
+    useBatchSenderContract();
 
   const [tonAmount, setTonAmount] = useState(0);
   const [comment, setComment] = useState("");
@@ -31,6 +33,9 @@ export function TransferTon() {
   const [formError, setformError] = useState(false);
 
   const updateInfo = async () => {
+    if (!(await myJettonAddress(senderAddress))) return;
+    console.log(await myJettonAddress(senderAddress));
+
     let address: Address;
     try {
       address = Address.parse(jettonContractAddress);
@@ -38,9 +43,18 @@ export function TransferTon() {
       return;
     }
 
+    setCAJettonWalletAddress(
+      (await myJettonAddress(senderAddress)!).toString()
+    );
+
+    console.log(caJettonWalletAddress);
+    console.log(caJettonWalletAddress);
+    console.log(caJettonWalletAddress);
+    console.log(caJettonWalletAddress);
+
     let sender: Address;
     try {
-      sender = Address.parse(caAddress!);
+      sender = await myJettonAddress(senderAddress)!;
     } catch (e) {
       return;
     }
@@ -68,7 +82,12 @@ export function TransferTon() {
 
   useEffect(() => {
     updateInfo();
-  }, [jettonContractAddress, tonClient, senderAddress]);
+  }, [
+    jettonContractAddress,
+    tonClient,
+    myJettonAddress(senderAddress),
+    senderAddress,
+  ]);
 
   const commentBody = beginCell()
     .storeUint(0, 32)
@@ -193,7 +212,16 @@ export function TransferTon() {
           </FlexBoxRow>
         )}
         <FlexBoxRow>
-          <label>Amount {type == "Jetton" && "(minimum amount is 1)"}</label>
+          <label>Send Jettons Here {type == "Jetton"}</label>
+          <Input
+            style={{ marginRight: 8 }}
+            disabled
+            value={caJettonWalletAddress ?? ""}
+            onChange={(e) => setTonAmount(Number(e.target.value))}
+          ></Input>
+        </FlexBoxRow>
+        <FlexBoxRow>
+          <label>Amount {type == "Jetton"}</label>
           <Input
             style={{ marginRight: 8 }}
             type="number"
@@ -203,7 +231,7 @@ export function TransferTon() {
           ></Input>
         </FlexBoxRow>
         <FlexBoxRow>
-          <label>Amount </label>
+          <label>Comment </label>
           <Input
             style={{ marginRight: 8 }}
             type="text"

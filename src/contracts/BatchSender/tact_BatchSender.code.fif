@@ -2,6 +2,8 @@ PROGRAM{
   DECLPROC __tact_verify_address
   DECLPROC __tact_load_address
   DECLPROC __tact_store_address
+  DECLPROC __tact_create_address
+  DECLPROC __tact_compute_contract_address
   DECLPROC __tact_my_balance
   DECLPROC __tact_not_null
   DECLPROC __tact_context_get
@@ -11,27 +13,36 @@ PROGRAM{
   DECLPROC __tact_dict_get_int_cell
   DECLPROC __tact_dict_get_int_slice
   DECLPROC __tact_slice_eq_bits
+  DECLPROC __tact_dict_set_code
+  DECLPROC __tact_dict_get_code
   DECLPROC $Deploy$_load
   DECLPROC $DeployOk$_store
   DECLPROC $DeployOk$_store_cell
-  DECLPROC $SetFee$_load
-  DECLPROC $SendTon$_load
-  DECLPROC $SendJetton$_load
   DECLPROC $ChangeContractOwner$_load
+  DECLPROC $InternalSendJetton$_store
+  DECLPROC $InternalSendJetton$_store_cell
+  DECLPROC $SetFee$_load
+  DECLPROC $SendJetton$_load
+  DECLPROC $SendTon$_load
   DECLPROC $BatchSender$_store
   DECLPROC $BatchSender$_load
   DECLPROC $StateInit$_not_null
   DECLPROC $Context$_get_value
+  DECLPROC $BatchJettonSender$init$_store
   DECLPROC $BatchSender$_contract_init
   DECLPROC $BatchSender$_contract_load
   DECLPROC $BatchSender$_contract_store
+  DECLPROC $global_contractAddress
   DECLPROC $global_send
+  DECLPROC $BatchJettonSender$_init_child
   DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+  DECLPROC $InternalSendJetton$_constructor_contractAddress_body
   DECLPROC $BatchSender$_fun_SendJettonBatch
   DECLPROC $BatchSender$_fun_sendTonBatch
   DECLPROC $BatchSender$_fun_balance
   DECLPROC $BatchSender$_fun_fee
-  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+  DECLPROC $BatchSender$_fun_myJettonWalletAddress
   DECLPROC $BatchSender$_fun_forward
   DECLPROC $BatchSender$_fun_notify
   DECLPROC $SendParameters$_constructor_to_bounce_value_mode
@@ -44,6 +55,7 @@ PROGRAM{
   DECLPROC $BatchSender$_internal_binary_Deploy
   104128 DECLMETHOD %balance
   123159 DECLMETHOD %fee
+  68055 DECLMETHOD %myJettonWalletAddress
   113617 DECLMETHOD supported_interfaces
   121275 DECLMETHOD get_abi_ipfs
   115390 DECLMETHOD lazy_deployment_completed
@@ -77,6 +89,39 @@ PROGRAM{
   __tact_store_address PROCINLINE:<{
     __tact_verify_address INLINECALLDICT
     STSLICER
+  }>
+  __tact_create_address PROCINLINE:<{
+    NEWC
+    2 PUSHINT
+    SWAP
+    2 STU
+    0 PUSHINT
+    SWAP
+    1 STU
+    s1 s2 XCHG
+    8 STI
+    256 STU
+    ENDC
+    CTOS
+    __tact_verify_address INLINECALLDICT
+  }>
+  __tact_compute_contract_address PROCINLINE:<{
+    NEWC
+    0 PUSHINT
+    SWAP
+    2 STU
+    3 PUSHINT
+    SWAP
+    2 STU
+    0 PUSHINT
+    SWAP
+    1 STU
+    s1 s2 XCHG
+    STREF
+    STREF
+    ENDC
+    HASHCU
+    __tact_create_address INLINECALLDICT
   }>
   __tact_my_balance PROCINLINE:<{
     BALANCE
@@ -134,6 +179,18 @@ PROGRAM{
   __tact_slice_eq_bits PROCINLINE:<{
     SDEQ
   }>
+  __tact_dict_set_code PROCINLINE:<{
+    s0 s2 XCHG
+    16 PUSHINT
+    DICTUSETREF
+  }>
+  __tact_dict_get_code PROCINLINE:<{
+    SWAP
+    16 PUSHINT
+    DICTUGETREF
+    NULLSWAPIFNOT
+    135 THROWIFNOT
+  }>
   $Deploy$_load PROCINLINE:<{
     32 LDU
     SWAP
@@ -155,6 +212,28 @@ PROGRAM{
     $DeployOk$_store INLINECALLDICT
     ENDC
   }>
+  $ChangeContractOwner$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    278038460 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    __tact_load_address INLINECALLDICT
+  }>
+  $InternalSendJetton$_store PROCINLINE:<{
+    1250200632 PUSHINT
+    s0 s3 XCHG2
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    STREF
+  }>
+  $InternalSendJetton$_store_cell PROCINLINE:<{
+    NEWC
+    -ROT
+    $InternalSendJetton$_store INLINECALLDICT
+    ENDC
+  }>
   $SetFee$_load PROCINLINE:<{
     32 LDU
     SWAP
@@ -164,19 +243,6 @@ PROGRAM{
     257 PUSHINT
     LDIX
     SWAP
-  }>
-  $SendTon$_load PROCINLINE:<{
-    32 LDU
-    SWAP
-    69530395 PUSHINT
-    EQUAL
-    129 THROWIFNOT
-    LDDICT
-    LDDICT
-    LDDICT
-    257 PUSHINT
-    LDIX
-    4 -ROLL
   }>
   $SendJetton$_load PROCINLINE:<{
     32 LDU
@@ -193,13 +259,18 @@ PROGRAM{
     LDIX
     4 -ROLL
   }>
-  $ChangeContractOwner$_load PROCINLINE:<{
+  $SendTon$_load PROCINLINE:<{
     32 LDU
     SWAP
-    278038460 PUSHINT
+    69530395 PUSHINT
     EQUAL
     129 THROWIFNOT
-    __tact_load_address INLINECALLDICT
+    LDDICT
+    LDDICT
+    LDDICT
+    257 PUSHINT
+    LDIX
+    4 -ROLL
   }>
   $BatchSender$_store PROCINLINE:<{
     -ROT
@@ -224,9 +295,12 @@ PROGRAM{
     s1 s3 XCHG
     3 BLKDROP
   }>
+  $BatchJettonSender$init$_store PROCINLINE:<{
+    __tact_store_address INLINECALLDICT
+  }>
   $BatchSender$_contract_init PROCREF:<{
     __tact_context_get_sender INLINECALLDICT
-    50000000 PUSHINT
+    20000000 PUSHINT
   }>
   $BatchSender$_contract_load PROCREF:<{
     c4 PUSH
@@ -260,6 +334,11 @@ PROGRAM{
     $BatchSender$_store INLINECALLDICT
     ENDC
     c4 POP
+  }>
+  $global_contractAddress PROCINLINE:<{
+    0 PUSHINT
+    -ROT
+    __tact_compute_contract_address INLINECALLDICT
   }>
   $global_send PROCREF:<{
     NEWC
@@ -363,50 +442,93 @@ PROGRAM{
     SWAP
     SENDRAWMSG
   }>
+  $BatchJettonSender$_init_child PROCREF:<{
+    SWAP
+    CTOS
+    LDDICT
+    DROP
+    NEWDICT
+    SWAP
+    48081 PUSHINT
+    __tact_dict_get_code INLINECALLDICT
+    SWAP
+    48081 PUSHINT
+    s2 PUSH
+    __tact_dict_set_code INLINECALLDICT
+    NEWC
+    SWAP
+    NEWC
+    STDICT
+    ENDC
+    SWAP
+    STREF
+    FALSE
+    SWAP
+    1 STI
+    ROT
+    $BatchJettonSender$init$_store INLINECALLDICT
+    ENDC
+  }>
   $SendParameters$_constructor_to_value_mode_bounce_body PROCINLINE:<{
     s1 s4 XCHG
     s3 s3 s0 XCHG3
     PUSHNULL
     PUSHNULL
   }>
+  $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
+  }>
+  $InternalSendJetton$_constructor_contractAddress_body PROCINLINE:<{
+  }>
   $BatchSender$_fun_SendJettonBatch PROCREF:<{
     s4 s1 PUSH2
     MUL
+    __tact_context_sys GETGLOB
+    __tact_context_get_sender INLINECALLDICT
+    $BatchJettonSender$_init_child INLINECALLDICT
     53657 PUSHINT
     __tact_context_get INLINECALLDICT
     $Context$_get_value INLINECALLDICT
-    s2 s3 PUXC
+    s4 s5 PUXC
     ADD
-    s1 s3 XCHG
+    s1 s5 XCHG
     GEQ
-    s1 s2 XCHG
+    s1 s4 XCHG
     THROWANYIFNOT
+    WHILE:<{
+      s3 PUSH
+      0 GTINT
+    }>DO<{
+      s4 PUSH
+      257 PUSHINT
+      s5 PUSH
+      __tact_dict_get_int_cell INLINECALLDICT
+      __tact_not_null INLINECALLDICT
+      s1 s3 PUSH2
+      $global_contractAddress INLINECALLDICT
+      40000000 PUSHINT
+      2 PUSHINT
+      s9 PUSH
+      TRUE
+      s0 s5 XCHG
+      $InternalSendJetton$_constructor_contractAddress_body INLINECALLDICT
+      $InternalSendJetton$_store_cell INLINECALLDICT
+      s3 s4 XCHG
+      s1 s3 s0 XCHG3
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+      $global_send INLINECALLDICT
+      s0 s3 XCHG
+      DEC
+      s0 s3 XCHG
+    }>
+    s1 s5 XCHG
+    5 BLKDROP
     2 PUSHINT
     TRUE
     B{b5ee9c7241010101001a000030000000004665652066726f6d20546f6e2053707261796572795652d6} B>boc PUSHREF
-    s8 PUSH
+    s5 PUSH
     4 -ROLL
     $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
     $global_send INLINECALLDICT
-    WHILE:<{
-      DUP
-      0 GTINT
-    }>DO<{
-      OVER
-      257 PUSHINT
-      s2 PUSH
-      __tact_dict_get_int_cell INLINECALLDICT
-      __tact_not_null INLINECALLDICT
-      10000000 PUSHINT
-      2 PUSHINT
-      TRUE
-      s6 PUSH
-      s0 s4 XCHG
-      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
-      $global_send INLINECALLDICT
-      DEC
-    }>
-    3 BLKDROP
   }>
   $BatchSender$_fun_sendTonBatch PROCREF:<{
     s4 s0 PUSH2
@@ -433,30 +555,23 @@ PROGRAM{
     s1 s2 XCHG
     GEQ
     THROWANYIFNOT
-    2 PUSHINT
-    TRUE
-    B{b5ee9c7241010101001a000030000000004665652066726f6d20546f6e2053707261796572795652d6} B>boc PUSHREF
-    s9 PUSH
-    4 -ROLL
-    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
-    $global_send INLINECALLDICT
     WHILE:<{
-      DUP
+      OVER
       0 GTINT
     }>DO<{
-      s3 PUSH
+      s4 PUSH
       257 PUSHINT
-      s2 PUSH
+      s3 PUSH
       __tact_dict_get_int_slice INLINECALLDICT
       __tact_not_null INLINECALLDICT
       257 PUSHINT
-      s4 s(-1) s(-1) PUXCPU
-      s4 s(-1) PUXC
+      s5 s(-1) s(-1) PUXCPU
+      s5 s(-1) PUXC
       __tact_dict_get_int_int INLINECALLDICT
       __tact_not_null INLINECALLDICT
-      s3 PUSH
-      257 PUSHINT
       s4 PUSH
+      257 PUSHINT
+      s5 PUSH
       __tact_dict_get_int_cell INLINECALLDICT
       __tact_not_null INLINECALLDICT
       2 PUSHINT
@@ -464,9 +579,18 @@ PROGRAM{
       ROT
       $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
       $global_send INLINECALLDICT
+      SWAP
       DEC
+      SWAP
     }>
-    4 BLKDROP
+    4 1 BLKDROP2
+    2 PUSHINT
+    TRUE
+    B{b5ee9c7241010101001a000030000000004665652066726f6d20546f6e2053707261796572795652d6} B>boc PUSHREF
+    s5 PUSH
+    4 -ROLL
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
   }>
   $BatchSender$_fun_balance PROCREF:<{
     __tact_my_balance INLINECALLDICT
@@ -474,7 +598,11 @@ PROGRAM{
   $BatchSender$_fun_fee PROCREF:<{
     DUP
   }>
-  $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
+  $BatchSender$_fun_myJettonWalletAddress PROCREF:<{
+    __tact_context_sys GETGLOB
+    SWAP
+    $BatchJettonSender$_init_child INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
   }>
   $BatchSender$_fun_forward PROCREF:<{
     PUSHNULL
@@ -558,6 +686,13 @@ PROGRAM{
     $BatchSender$_fun_fee INLINECALLDICT
     2 1 BLKDROP2
   }>
+  %myJettonWalletAddress PROC:<{
+    __tact_verify_address INLINECALLDICT
+    $BatchSender$_contract_load INLINECALLDICT
+    ROT
+    $BatchSender$_fun_myJettonWalletAddress INLINECALLDICT
+    2 1 BLKDROP2
+  }>
   supported_interfaces PROC:<{
     123515602279859691144772641439386770278 PUSHINT
     209801025412363888721030803524359905849 PUSHINT
@@ -566,7 +701,7 @@ PROGRAM{
     209474421377847335869795010607481022628 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d57524553354777734d4e6f4159704a46523262515253344d704e5162457063714c726f505563653845627263} PUSHSLICE
+    x{697066733a2f2f516d657868535a6969584d34354c696e58736e31474b554b44764571705639636373557377634743313839573338} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH

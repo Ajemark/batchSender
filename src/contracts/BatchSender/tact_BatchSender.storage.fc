@@ -70,6 +70,40 @@ cell $DeployOk$_store_cell((int) v) inline {
 }
 
 ;;
+;; Type: ChangeContractOwner
+;; Header: 0x109287bc
+;; TLB: change_contract_owner#109287bc newOwner:address = ChangeContractOwner
+;;
+
+(slice, ((slice))) $ChangeContractOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 278038460);
+    var v'newOwner = sc_0~__tact_load_address();
+    return (sc_0, (v'newOwner));
+}
+
+;;
+;; Type: InternalSendJetton
+;; Header: 0x4a848c38
+;; TLB: internal_send_jetton#4a848c38 contractAddress:address body:^cell = InternalSendJetton
+;;
+
+builder $InternalSendJetton$_store(builder build_0, (slice, cell) v) inline {
+    var (v'contractAddress, v'body) = v;
+    build_0 = store_uint(build_0, 1250200632, 32);
+    build_0 = __tact_store_address(build_0, v'contractAddress);
+    build_0 = build_0.store_ref(v'body);
+    return build_0;
+}
+
+cell $InternalSendJetton$_store_cell((slice, cell) v) inline {
+    return $InternalSendJetton$_store(begin_cell(), v).end_cell();
+}
+
+((slice, cell)) $InternalSendJetton$_constructor_contractAddress_body(slice contractAddress, cell body) inline {
+    return (contractAddress, body);
+}
+
+;;
 ;; Type: SetFee
 ;; Header: 0xc00a7dad
 ;; TLB: set_fee#c00a7dad fee:int257 = SetFee
@@ -80,23 +114,6 @@ cell $DeployOk$_store_cell((int) v) inline {
     var v'fee = sc_0~load_int(257);
     return (sc_0, (v'fee));
 }
-
-;;
-;; Type: SendTon
-;; Header: 0x0424f31b
-;; TLB: send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = SendTon
-;;
-
-(slice, ((cell, cell, cell, int))) $SendTon$_load(slice sc_0) inline {
-    throw_unless(129, sc_0~load_uint(32) == 69530395);
-    var v'address = sc_0~load_dict();
-    var v'amount = sc_0~load_dict();
-    var v'comment = sc_0~load_dict();
-    var v'length = sc_0~load_int(257);
-    return (sc_0, (v'address, v'amount, v'comment, v'length));
-}
-
-((cell, cell, cell, int)) $SendTon$_tensor_cast((cell, cell, cell, int) v) asm "NOP";
 
 ;;
 ;; Type: SendJetton
@@ -116,15 +133,47 @@ cell $DeployOk$_store_cell((int) v) inline {
 ((slice, cell, int, int)) $SendJetton$_tensor_cast((slice, cell, int, int) v) asm "NOP";
 
 ;;
-;; Type: ChangeContractOwner
-;; Header: 0x109287bc
-;; TLB: change_contract_owner#109287bc newOwner:address = ChangeContractOwner
+;; Type: SendTon
+;; Header: 0x0424f31b
+;; TLB: send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment:dict<int, ^cell> length:int257 = SendTon
 ;;
 
-(slice, ((slice))) $ChangeContractOwner$_load(slice sc_0) inline {
-    throw_unless(129, sc_0~load_uint(32) == 278038460);
-    var v'newOwner = sc_0~__tact_load_address();
-    return (sc_0, (v'newOwner));
+(slice, ((cell, cell, cell, int))) $SendTon$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 69530395);
+    var v'address = sc_0~load_dict();
+    var v'amount = sc_0~load_dict();
+    var v'comment = sc_0~load_dict();
+    var v'length = sc_0~load_int(257);
+    return (sc_0, (v'address, v'amount, v'comment, v'length));
+}
+
+((cell, cell, cell, int)) $SendTon$_tensor_cast((cell, cell, cell, int) v) asm "NOP";
+
+;;
+;; Type: BatchJettonSender
+;;
+
+builder $BatchJettonSender$init$_store(builder build_0, (slice) v) inline {
+    var (v'owner) = v;
+    build_0 = __tact_store_address(build_0, v'owner);
+    return build_0;
+}
+
+(cell, cell) $BatchJettonSender$_init_child(cell sys', slice $owner) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: BatchJettonSender
+    cell mine = __tact_dict_get_code(source, 48081);
+    contracts = __tact_dict_set_code(contracts, 48081, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $BatchJettonSender$init$_store(b, ($owner));
+    return (mine, b.end_cell());
 }
 
 ;;

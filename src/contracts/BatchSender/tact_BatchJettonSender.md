@@ -1,6 +1,6 @@
 # TACT Compilation Report
-Contract: BatchSender
-BOC Size: 1658 bytes
+Contract: BatchJettonSender
+BOC Size: 1054 bytes
 
 # Types
 Total Types: 17
@@ -74,14 +74,9 @@ TLB: `send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment
 Signature: `SendTon{address:dict<int, address>,amount:dict<int, int>,comment:dict<int, ^cell>,length:int257}`
 
 # Get Methods
-Total Get Methods: 3
+Total Get Methods: 1
 
 ## balance
-
-## fee
-
-## myJettonWalletAddress
-Argument: address
 
 # Error Codes
 2: Stack undeflow
