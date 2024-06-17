@@ -200,28 +200,31 @@ export function TransferTon() {
           </select>
         </div>
         {type == "Jetton" && (
-          <FlexBoxRow>
-            <label>Jetton Contract Address </label>
-            <Input
-              style={{ marginRight: 8 }}
-              type="text"
-              placeholder="Enter Jetton Contract Address"
-              value={jettonContractAddress}
-              onChange={(e) => setJettonContractAddress(e.target.value)}
-            ></Input>
-          </FlexBoxRow>
+          <div>
+            <FlexBoxRow style={{ margin: "10px 0px" }}>
+              <label>Jetton Contract Address </label>
+              <Input
+                style={{ marginRight: 8 }}
+                type="text"
+                placeholder="Enter Jetton Contract Address"
+                value={jettonContractAddress}
+                onChange={(e) => setJettonContractAddress(e.target.value)}
+              ></Input>
+            </FlexBoxRow>
+
+            <FlexBoxRow>
+              <label>Send Jettons Here</label>
+              <Input
+                style={{ marginRight: 8 }}
+                disabled
+                value={caJettonWalletAddress ?? ""}
+                onChange={(e) => setTonAmount(Number(e.target.value))}
+              ></Input>
+            </FlexBoxRow>
+          </div>
         )}
         <FlexBoxRow>
-          <label>Send Jettons Here {type == "Jetton"}</label>
-          <Input
-            style={{ marginRight: 8 }}
-            disabled
-            value={caJettonWalletAddress ?? ""}
-            onChange={(e) => setTonAmount(Number(e.target.value))}
-          ></Input>
-        </FlexBoxRow>
-        <FlexBoxRow>
-          <label>Amount {type == "Jetton"}</label>
+          <label>Amount to send</label>
           <Input
             style={{ marginRight: 8 }}
             type="number"
