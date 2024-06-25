@@ -183,7 +183,7 @@ export function TransferJetton({
         </p>
       </div>
 
-      <div className="flex w-full justify-end  ">
+      <div className="flex w-full items-end flex-col ">
         <div className="w-full flex border-[3px] overflow-hidden border-[#2eaddc] rounded-md  md:w-[500px]  ">
           <input
             className="w-full outline-none ring-0 p-2 flex-1"

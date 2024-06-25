@@ -210,6 +210,13 @@ export function TransferTon() {
               jettonContractAddress={jettonContractAddress}
               jettonWalletAddress={jettonWalletAddress}
             />
+            <div className="flex mt-3 flex-col md:flex-row">
+              <label className="flex-1">Your Spray Jetton Wallet </label>
+              <input
+                className="py-2  outline-none ring-0 w-full md:w-[500px] border-[3px]   p-2 rounded-md  font-[600]"
+                value={caJettonWalletAddress?.toString()}
+              />
+            </div>
           </div>
         )}
         <div className="flex flex-col md:flex-row">
@@ -237,7 +244,7 @@ export function TransferTon() {
             Recipient Addresses (seperated by ENTER key)
           </label>
           <textarea
-            className="border-[3px] md:w-[500px] p-2   w-full rounded-md"
+            className="border-[3px] md:w-[500px]  outline-none ring-0 p-2  w-full rounded-md"
             rows={10}
             placeholder="Paste ddresses here"
             value={tonRecipient}
