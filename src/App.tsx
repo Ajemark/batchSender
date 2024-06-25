@@ -9,7 +9,7 @@ import "@twa-dev/sdk";
 import { TransferJetton } from "./components/TransferJetton";
 
 const StyledApp = styled.div`
-  background-color: #e8e8e8;
+  background-color: white;
   color: black;
 
   @media (prefers-color-scheme: dark) {
@@ -33,7 +33,7 @@ function App() {
       <AppContainer>
         <FlexBoxCol>
           <FlexBoxRow>
-            <TonConnectButton />
+            <TonConnectButton className="ml-auto" />
             <Button>
               {network
                 ? network === CHAIN.MAINNET

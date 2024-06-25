@@ -1,24 +1,31 @@
 import { storeJettonTransferMessage } from "../contracts/jetton/jetton-wallet";
-import { useTonAddress } from "@tonconnect/ui-react";
+import { useTonAddress, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useMemo, useState } from "react";
-import { Address, beginCell, Cell, TupleBuilder } from "ton-core";
+import { Address, beginCell, Cell, toNano, TupleBuilder } from "ton-core";
 import { useTonClient } from "../hooks/useTonClient";
+import { Input } from "./styled/styled";
 // import { useTonClient } from "../store/tonClient";
 
-export function TransferJetton() {
+// kQDVolXfKQjzObzFlnepkvigZbMih993CSr59zATKmaT2uED;
+
+export function TransferJetton({
+  jettonContractAddress,
+  caJettonWalletAddress,
+}: any) {
   const senderAddress = useTonAddress();
-  const [jettonContractAddress, setJettonContractAddress] = useState("");
   const [jettonWalletAddress, setJettonWalletAddress] = useState("");
-  const [queryId, setQueryId] = useState("0");
-  const [destinationAddress, setDestinationAddress] = useState("");
+  const [senderJettonWalletAddress, setSenderJettonWalletAddress] =
+    useState("");
+  const [destinationAddress, setDestinationAddress] = useState(
+    caJettonWalletAddress
+  );
   const [responseDestinationAddress, setResponseDestinationAddress] =
     useState("");
   const [amount, setAmount] = useState("");
-  const [customPayload, setCustomPayload] = useState("");
-  const [forwardAmount, setForwardAmount] = useState("");
-  const [forwardPayload, setForwardPayload] = useState("");
+  const [jettonBal, setJettonBal] = useState("");
 
   const tonClient = useTonClient();
+  const [tonConnectUI] = useTonConnectUI();
 
   const updateInfo = async () => {
     let address: Address;
@@ -28,18 +35,36 @@ export function TransferJetton() {
       return;
     }
 
-    let sender: Address;
+    let caJetton: Address;
     try {
-      sender = Address.parse(senderAddress);
+      caJetton = Address.parse(senderAddress);
     } catch (e) {
       return;
     }
 
-    console.log("first");
+    const caJettonBbuilder = new TupleBuilder();
+    caJettonBbuilder.writeAddress(caJetton);
+
+    const caJettonInfo = await tonClient?.client?.callGetMethod(
+      address,
+      "get_wallet_address",
+      caJettonBbuilder.build()
+    );
+
+    setSenderJettonWalletAddress(
+      caJettonInfo?.stack.readAddress().toString() ?? ""
+    );
+
+    let sender: Address;
+    try {
+      sender = Address.parse(caJettonWalletAddress);
+    } catch (e) {
+      return;
+    }
+
     const builder = new TupleBuilder();
     builder.writeAddress(sender);
 
-    // console.log(tonClient.client?.callGetMethod);
     const info = await tonClient?.client?.callGetMethod(
       address,
       "get_wallet_address",
@@ -48,11 +73,20 @@ export function TransferJetton() {
 
     const jettonWalletAddress = info?.stack.readAddress();
 
-    if (jettonWalletAddress)
+    if (jettonWalletAddress) {
       setJettonWalletAddress(
         jettonWalletAddress.toString({ bounceable: true, urlSafe: true })
       );
-    console.log("jetton wallet address", jettonWalletAddress);
+
+      const info2 = await tonClient?.client?.callGetMethod(
+        jettonWalletAddress,
+        "get_wallet_data",
+        builder.build()
+      );
+
+      // @ts-ignore
+      setJettonBal(info2?.stack.items[1].value.toString());
+    }
   };
 
   useEffect(() => {
@@ -76,23 +110,6 @@ export function TransferJetton() {
       sender.toString({ bounceable: false, urlSafe: true })
     );
   }, [senderAddress, responseDestinationAddress]);
-
-  useEffect(() => {
-    let destination: ReturnType<typeof Address.parseFriendly>;
-    try {
-      destination = Address.parseFriendly(destinationAddress);
-    } catch (e) {
-      return;
-    }
-
-    if (!destination.isBounceable) {
-      return;
-    }
-
-    setDestinationAddress(
-      destination.address.toString({ bounceable: false, urlSafe: true })
-    );
-  }, [destinationAddress]);
 
   useEffect(() => {
     let destination: ReturnType<typeof Address.parseFriendly>;
@@ -126,143 +143,66 @@ export function TransferJetton() {
       message = beginCell()
         .store(
           storeJettonTransferMessage({
-            queryId: queryId ? BigInt(queryId) : 0n,
+            queryId: 0n,
             amount: BigInt(amount),
             destination: Address.parse(destinationAddress),
-            responseDestination: responseDestinationAddress
-              ? Address.parse(responseDestinationAddress)
-              : Address.parse(senderAddress),
-            customPayload: customPayload
-              ? Cell.fromBase64(customPayload)
-              : null,
-            forwardAmount: BigInt(forwardAmount),
-            forwardPayload: forwardPayload
-              ? Cell.fromBase64(forwardPayload)
-              : null,
+            responseDestination: Address.parse(senderAddress),
+            customPayload: null,
+            forwardAmount: 0n,
+            forwardPayload: null,
           })
         )
         .endCell();
     } catch (e) {}
 
     return message;
-  }, [
-    queryId,
-    senderAddress,
-    jettonWalletAddress,
-    destinationAddress,
-    amount,
-    customPayload,
-    forwardAmount,
-    forwardPayload,
-  ]);
+  }, [senderAddress, jettonWalletAddress, destinationAddress, amount]);
+
+  const topUpBal = () => {
+    console.log(deployParams);
+    if (deployParams) {
+      tonConnectUI.sendTransaction({
+        messages: [
+          {
+            address: senderJettonWalletAddress,
+            amount: toNano("0.05").toString(),
+            payload: deployParams.toBoc().toString("base64"),
+          },
+        ],
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+      });
+    }
+  };
 
   return (
-    <div className="container mx-auto">
-      <div>
-        <label htmlFor="jettonContractAddress">jettonContractAddress:</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="jettonContractAddress"
-          value={jettonContractAddress}
-          onChange={(e) => setJettonContractAddress(e.target.value)}
-        />
+    <div className="w-full  ">
+      <div className="w-full md:w-[500px] ml-auto justify-between flex">
+        <p className=" font-[600] py-2">Top Up Bal</p>
+        <p className=" font-[600] py-2">
+          Bal <span>{(Number(jettonBal) / 10 ** 18).toFixed(3)}</span>
+        </p>
       </div>
 
-      <div>
-        <label htmlFor="imageUrl">jettonWalletAddress:</label>
-        <input
-          disabled={true}
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="jettonWalletAddress"
-          value={jettonWalletAddress}
-          onChange={(e) => setJettonWalletAddress(e.target.value)}
-        />
+      <div className="flex w-full justify-end  ">
+        <div className="w-full flex border-[3px] overflow-hidden border-[#2eaddc] rounded-md  md:w-[500px]  ">
+          <input
+            className="w-full outline-none ring-0 p-2 flex-1"
+            type="number"
+            id="amount"
+            placeholder="Amount to top up"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <button
+            className="bg-[#2eaddc] px-4 py-2"
+            onClick={() => {
+              topUpBal();
+            }}
+          >
+            Top Up
+          </button>
+        </div>
       </div>
-
-      <div>
-        <label htmlFor="name">queryId:</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="queryId"
-          value={queryId}
-          onChange={(e) => setQueryId(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">destinationAddress:</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="destinationAddress"
-          value={destinationAddress}
-          onChange={(e) => setDestinationAddress(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">responseDestinationAddress:</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="responseDestinationAddress"
-          value={responseDestinationAddress}
-          onChange={(e) => setResponseDestinationAddress(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">amount (in units):</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">customPayload (base64):</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="customPayload"
-          value={customPayload}
-          onChange={(e) => setCustomPayload(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">forwardAmount (in nano):</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="forwardAmount"
-          value={forwardAmount}
-          onChange={(e) => setForwardAmount(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="name">forwardPayload (base64):</label>
-        <input
-          className="w-full px-2 py-2 bg-gray-200 rounded"
-          type="text"
-          id="forwardPayload"
-          value={forwardPayload}
-          onChange={(e) => setForwardPayload(e.target.value)}
-        />
-      </div>
-
-      {/* {deployParams && (
-        <>
-          <ResultContainer address={jettonWalletAddress} cell={deployParams} amount={100000000n} />
-        </>
-      )} */}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { useTonAddress } from "@tonconnect/ui-react";
 import { useBatchSenderContract } from "../hooks/useBatchContract";
 import { useTonClient } from "../hooks/useTonClient";
 import { storeJettonTransferMessage } from "../contracts/jetton/jetton-wallet";
+import { TransferJetton } from "./TransferJetton";
 
 export function TransferTon() {
   const senderAddress = useTonAddress();
@@ -34,7 +35,6 @@ export function TransferTon() {
 
   const updateInfo = async () => {
     if (!(await myJettonAddress(senderAddress))) return;
-    console.log(await myJettonAddress(senderAddress));
 
     let address: Address;
     try {
@@ -47,11 +47,6 @@ export function TransferTon() {
       (await myJettonAddress(senderAddress)!).toString()
     );
 
-    console.log(caJettonWalletAddress);
-    console.log(caJettonWalletAddress);
-    console.log(caJettonWalletAddress);
-    console.log(caJettonWalletAddress);
-
     let sender: Address;
     try {
       sender = await myJettonAddress(senderAddress)!;
@@ -62,10 +57,6 @@ export function TransferTon() {
     const builder = new TupleBuilder();
     builder.writeAddress(sender);
 
-    // console.log(tonClient.client?.callGetMethod);
-
-    const info2 = await tonClient?.client?.getContractState(address);
-    console.log(info2);
     const info = await tonClient?.client?.callGetMethod(
       address,
       "get_wallet_address",
@@ -184,15 +175,17 @@ export function TransferTon() {
   };
 
   return (
-    <Card>
-      <FlexBoxCol>
-        <h3>Transfer {type}</h3>
+    <div>
+      <FlexBoxCol className="space-y-3  ">
+        <h3 className="text-2xl font-[600] my-4 text-center">
+          Transfer {type}
+        </h3>
 
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p style={{ width: "100%" }}>What To Send?</p>
+        <div className="flex md:flex-row flex-col  ">
+          <p className="flex-1">What To Send?</p>
           <select
+            className="border-[3px] p-2 md:w-[500px] w-full rounded-md"
             onChange={(e) => setType(e.target.value)}
-            style={{ width: "100%", height: "40px" }}
             name="type"
           >
             <option value="Ton">Transfer Ton</option>
@@ -201,61 +194,59 @@ export function TransferTon() {
         </div>
         {type == "Jetton" && (
           <div>
-            <FlexBoxRow style={{ margin: "10px 0px" }}>
-              <label>Jetton Contract Address </label>
-              <Input
-                style={{ marginRight: 8 }}
+            <div className="flex flex-col md:flex-row">
+              <label className="flex-1">Jetton CA </label>
+              <input
+                className="w-full md:w-[500px] rounded-md border-[3px] outline-none ring-0 p-2"
                 type="text"
                 placeholder="Enter Jetton Contract Address"
                 value={jettonContractAddress}
                 onChange={(e) => setJettonContractAddress(e.target.value)}
-              ></Input>
-            </FlexBoxRow>
+              />
+            </div>
 
-            <FlexBoxRow>
-              <label>Send Jettons Here</label>
-              <Input
-                style={{ marginRight: 8 }}
-                disabled
-                value={caJettonWalletAddress ?? ""}
-                onChange={(e) => setTonAmount(Number(e.target.value))}
-              ></Input>
-            </FlexBoxRow>
+            <TransferJetton
+              caJettonWalletAddress={caJettonWalletAddress}
+              jettonContractAddress={jettonContractAddress}
+              jettonWalletAddress={jettonWalletAddress}
+            />
           </div>
         )}
-        <FlexBoxRow>
-          <label>Amount to send</label>
-          <Input
-            style={{ marginRight: 8 }}
+        <div className="flex flex-col md:flex-row">
+          <label className="flex-1">Amount to send</label>
+          <input
+            className="w-full md:w-[500px] rounded-md border-[3px] outline-none ring-0 p-2"
             type="number"
             placeholder="Enter ton amount"
             value={tonAmount}
             onChange={(e) => setTonAmount(Number(e.target.value))}
-          ></Input>
-        </FlexBoxRow>
-        <FlexBoxRow>
-          <label>Comment </label>
-          <Input
-            style={{ marginRight: 8 }}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row">
+          <label className="flex-1 ">Comment </label>
+          <input
+            className="w-full md:w-[500px] rounded-md border-[3px] outline-none ring-0 p-2"
             type="text"
             placeholder="Enter comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-          ></Input>
-        </FlexBoxRow>
-        <FlexBoxRow>
-          <label>To </label>
+          />
+        </div>
+        <div className="flex flex-col md:flex-row">
+          <label className="flex-1">
+            Recipient Addresses (seperated by ENTER key)
+          </label>
           <textarea
+            className="border-[3px] md:w-[500px] p-2   w-full rounded-md"
             rows={10}
             placeholder="Paste ddresses here"
-            style={{ marginRight: 8, width: "100%" }}
             value={tonRecipient}
             onChange={(e) => {
               e.preventDefault();
               setTonRecipient(e.target.value);
             }}
           />
-        </FlexBoxRow>
+        </div>
         <Button
           disabled={!connected}
           style={{ marginTop: 18 }}
@@ -272,6 +263,6 @@ export function TransferTon() {
           Please Enter all fields
         </p>
       )}
-    </Card>
+    </div>
   );
 }
