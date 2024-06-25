@@ -176,7 +176,7 @@ export function TransferTon() {
 
   return (
     <div>
-      <FlexBoxCol className="space-y-3  ">
+      <FlexBoxCol className="space-y-3  text-black">
         <h3 className="text-2xl font-[600] my-4 text-center">
           Transfer {type}
         </h3>
@@ -197,7 +197,7 @@ export function TransferTon() {
             <div className="flex flex-col md:flex-row">
               <label className="flex-1">Jetton CA </label>
               <input
-                className="w-full md:w-[500px] rounded-md border-[3px] outline-none ring-0 p-2"
+                className="w-full tex md:w-[500px] rounded-md border-[3px] outline-none ring-0 p-2"
                 type="text"
                 placeholder="Enter Jetton Contract Address"
                 value={jettonContractAddress}
