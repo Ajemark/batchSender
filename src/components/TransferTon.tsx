@@ -8,7 +8,7 @@ import {
   toNano,
 } from "ton";
 import { useTonConnect } from "../hooks/useTonConnect";
-import { Card, FlexBoxCol, FlexBoxRow, Button, Input } from "./styled/styled";
+import { FlexBoxCol, Button } from "./styled/styled";
 import { useTonAddress } from "@tonconnect/ui-react";
 import { useBatchSenderContract } from "../hooks/useBatchContract";
 import { useTonClient } from "../hooks/useTonClient";
@@ -34,6 +34,7 @@ export function TransferTon() {
   const [formError, setformError] = useState(false);
 
   const updateInfo = async () => {
+    // if (!senderAddress) alert("Kindly Connect Wallet!!");
     if (!(await myJettonAddress(senderAddress))) return;
 
     let address: Address;
@@ -47,6 +48,7 @@ export function TransferTon() {
       (await myJettonAddress(senderAddress)!).toString()
     );
 
+    console.log(caJettonWalletAddress);
     let sender: Address;
     try {
       sender = await myJettonAddress(senderAddress)!;

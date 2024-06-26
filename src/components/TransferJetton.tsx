@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Address, beginCell, Cell, toNano, TupleBuilder } from "ton-core";
 import { useTonClient } from "../hooks/useTonClient";
 import { Input } from "./styled/styled";
+import { getContractData } from "../utils/utils";
 // import { useTonClient } from "../store/tonClient";
 
 // kQDVolXfKQjzObzFlnepkvigZbMih993CSr59zATKmaT2uED;
@@ -16,6 +17,7 @@ export function TransferJetton({
   const [jettonWalletAddress, setJettonWalletAddress] = useState("");
   const [senderJettonWalletAddress, setSenderJettonWalletAddress] =
     useState("");
+  const [params, setParams]: any = useState();
   const [destinationAddress, setDestinationAddress] = useState(
     caJettonWalletAddress
   );
@@ -91,7 +93,7 @@ export function TransferJetton({
 
   useEffect(() => {
     updateInfo();
-  }, [jettonContractAddress, tonClient, senderAddress]);
+  }, [jettonContractAddress, jettonContractAddress, tonClient, senderAddress]);
 
   useEffect(() => {
     try {
@@ -111,27 +113,19 @@ export function TransferJetton({
     );
   }, [senderAddress, responseDestinationAddress]);
 
-  useEffect(() => {
-    let destination: ReturnType<typeof Address.parseFriendly>;
-    try {
-      destination = Address.parseFriendly(responseDestinationAddress);
-    } catch (e) {
-      return;
-    }
-
-    if (!destination.isBounceable) {
-      return;
-    }
-
-    setResponseDestinationAddress(
-      destination.address.toString({ bounceable: false, urlSafe: true })
+  const deployParams = useEffect(() => {
+    console.log(
+      jettonWalletAddress,
+      "  gg   ",
+      caJettonWalletAddress,
+      "   ",
+      amount,
+      "nn   ",
+      senderAddress
     );
-  }, [responseDestinationAddress]);
-
-  const deployParams = useMemo(() => {
     if (
       !jettonWalletAddress ||
-      !destinationAddress ||
+      !caJettonWalletAddress ||
       !amount ||
       !senderAddress
     ) {
@@ -145,7 +139,7 @@ export function TransferJetton({
           storeJettonTransferMessage({
             queryId: 0n,
             amount: BigInt(amount),
-            destination: Address.parse(destinationAddress),
+            destination: Address.parse(caJettonWalletAddress),
             responseDestination: Address.parse(senderAddress),
             customPayload: null,
             forwardAmount: 0n,
@@ -155,18 +149,24 @@ export function TransferJetton({
         .endCell();
     } catch (e) {}
 
-    return message;
-  }, [senderAddress, jettonWalletAddress, destinationAddress, amount]);
+    setParams(message);
+  }, [
+    senderAddress,
+    jettonContractAddress,
+    jettonWalletAddress,
+    destinationAddress,
+    amount,
+  ]);
 
   const topUpBal = () => {
     console.log(deployParams);
-    if (deployParams) {
+    if (params) {
       tonConnectUI.sendTransaction({
         messages: [
           {
             address: senderJettonWalletAddress,
             amount: toNano("0.05").toString(),
-            payload: deployParams.toBoc().toString("base64"),
+            payload: params.toBoc().toString("base64"),
           },
         ],
         validUntil: Math.floor(Date.now() / 1000) + 300,
@@ -174,10 +174,14 @@ export function TransferJetton({
     }
   };
 
+  // getContractData("kQDVolXfKQjzObzFlnepkvigZbMih993CSr59zATKmaT2uED");
   return (
     <div className="w-full  ">
       <div className="w-full md:w-[500px] ml-auto justify-between flex">
         <p className=" font-[600] py-2">Top Up Bal</p>
+        <p className=" font-[600] text-red-600 py-2">
+          {senderAddress ? "" : "Kindly connect Wallet"}
+        </p>
         <p className=" font-[600] py-2">
           Bal <span>{(Number(jettonBal) / 10 ** 18).toFixed(3)}</span>
         </p>
