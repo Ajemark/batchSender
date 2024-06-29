@@ -6,7 +6,6 @@ import { Button, FlexBoxCol, FlexBoxRow } from "./components/styled/styled";
 import { useTonConnect } from "./hooks/useTonConnect";
 import { CHAIN } from "@tonconnect/protocol";
 import "@twa-dev/sdk";
-import { TransferJetton } from "./components/TransferJetton";
 
 const StyledApp = styled.div`
   background-color: white;

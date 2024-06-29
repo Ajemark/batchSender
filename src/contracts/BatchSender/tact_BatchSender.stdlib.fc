@@ -153,7 +153,7 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
 }
 
 ((slice, int), ()) $BatchSender$_fun_forward((slice, int) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
+    var (($self'admin, $self'fee)) = $self;
     var ($init) = $init;
     cell $code = null();
     cell $data = null();
@@ -169,15 +169,15 @@ slice $global_contractAddress((cell, cell) $s) impure inline {
         if (($balanceBeforeMessage < 0)) {
             raw_reserve(0, 0);
             $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (128 | 2), $body, $code, $data));
-            return (($self'deployer, $self'fee), ());
+            return (($self'admin, $self'fee), ());
         }
     }
     $global_send($SendParameters$_constructor_bounce_to_value_mode_body_code_data($bounce, $to, 0, (64 | 2), $body, $code, $data));
-    return (($self'deployer, $self'fee), ());
+    return (($self'admin, $self'fee), ());
 }
 
 ((slice, int), ()) $BatchSender$_fun_notify((slice, int) $self, cell $body) impure inline {
-    var (($self'deployer, $self'fee)) = $self;
-    ($self'deployer, $self'fee)~$BatchSender$_fun_forward(__tact_context_get_sender(), $body, false, null());
-    return (($self'deployer, $self'fee), ());
+    var (($self'admin, $self'fee)) = $self;
+    ($self'admin, $self'fee)~$BatchSender$_fun_forward(__tact_context_get_sender(), $body, false, null());
+    return (($self'admin, $self'fee), ());
 }

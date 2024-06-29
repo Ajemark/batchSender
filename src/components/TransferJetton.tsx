@@ -113,16 +113,7 @@ export function TransferJetton({
     );
   }, [senderAddress, responseDestinationAddress]);
 
-  const deployParams = useEffect(() => {
-    console.log(
-      jettonWalletAddress,
-      "  gg   ",
-      caJettonWalletAddress,
-      "   ",
-      amount,
-      "nn   ",
-      senderAddress
-    );
+  useEffect(() => {
     if (
       !jettonWalletAddress ||
       !caJettonWalletAddress ||
@@ -138,7 +129,7 @@ export function TransferJetton({
         .store(
           storeJettonTransferMessage({
             queryId: 0n,
-            amount: BigInt(amount),
+            amount: BigInt(Number(amount) * 10 ** 9),
             destination: Address.parse(caJettonWalletAddress),
             responseDestination: Address.parse(senderAddress),
             customPayload: null,
@@ -159,7 +150,6 @@ export function TransferJetton({
   ]);
 
   const topUpBal = () => {
-    console.log(deployParams);
     if (params) {
       tonConnectUI.sendTransaction({
         messages: [
@@ -183,7 +173,7 @@ export function TransferJetton({
           {senderAddress ? "" : "Kindly connect Wallet"}
         </p>
         <p className=" font-[600] py-2">
-          Bal <span>{(Number(jettonBal) / 10 ** 18).toFixed(3)}</span>
+          Bal <span>{(Number(jettonBal) / 10 ** 9).toFixed(3)}</span>
         </p>
       </div>
 

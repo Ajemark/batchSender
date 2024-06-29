@@ -117,6 +117,9 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 ;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline;
 
+;; $SendParameters$_constructor_to_value_mode_bounce_body_code_data
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice to, int value, int mode, int bounce, cell body, cell code, cell data) inline;
+
 ;; $InternalSendJetton$_constructor_contractAddress_body
 ((slice, cell)) $InternalSendJetton$_constructor_contractAddress_body(slice contractAddress, cell body) inline;
 
@@ -131,6 +134,9 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 
 ;; $BatchSender$_fun_fee
 ((slice, int), int) $BatchSender$_fun_fee((slice, int) $self) impure inline_ref;
+
+;; $BatchSender$_fun_admin
+((slice, int), slice) $BatchSender$_fun_admin((slice, int) $self) impure inline_ref;
 
 ;; $BatchSender$_fun_myJettonWalletAddress
 ((slice, int), slice) $BatchSender$_fun_myJettonWalletAddress((slice, int) $self, slice $address) impure inline_ref;

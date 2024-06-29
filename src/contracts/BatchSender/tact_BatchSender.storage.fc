@@ -32,6 +32,10 @@ _ $Context$_get_value((int, slice, int, slice) v) inline {
     return (bounce, to, value, mode, body, code, data);
 }
 
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice to, int value, int mode, int bounce, cell body, cell code, cell data) inline {
+    return (bounce, to, value, mode, body, code, data);
+}
+
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_bounce_value_mode(slice to, int bounce, int value, int mode) inline {
     return (bounce, to, value, mode, null(), null(), null());
 }
@@ -181,16 +185,16 @@ builder $BatchJettonSender$init$_store(builder build_0, (slice) v) inline {
 ;;
 
 builder $BatchSender$_store(builder build_0, (slice, int) v) inline {
-    var (v'deployer, v'fee) = v;
-    build_0 = __tact_store_address(build_0, v'deployer);
+    var (v'admin, v'fee) = v;
+    build_0 = __tact_store_address(build_0, v'admin);
     build_0 = build_0.store_int(v'fee, 257);
     return build_0;
 }
 
 (slice, ((slice, int))) $BatchSender$_load(slice sc_0) inline {
-    var v'deployer = sc_0~__tact_load_address();
+    var v'admin = sc_0~__tact_load_address();
     var v'fee = sc_0~load_int(257);
-    return (sc_0, (v'deployer, v'fee));
+    return (sc_0, (v'admin, v'fee));
 }
 
 (slice, int) $BatchSender$_contract_load() impure inline_ref {

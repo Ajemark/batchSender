@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: BatchSender
-BOC Size: 1658 bytes
+BOC Size: 1707 bytes
 
 # Types
 Total Types: 17
@@ -74,11 +74,13 @@ TLB: `send_ton#0424f31b address:dict<int, address> amount:dict<int, int> comment
 Signature: `SendTon{address:dict<int, address>,amount:dict<int, int>,comment:dict<int, ^cell>,length:int257}`
 
 # Get Methods
-Total Get Methods: 3
+Total Get Methods: 4
 
 ## balance
 
 ## fee
+
+## admin
 
 ## myJettonWalletAddress
 Argument: address
@@ -109,7 +111,8 @@ Argument: address
 136: Invalid address
 137: Masterchain support is not enabled for this contract
 14110: 400
-15509: Only deployer is allowed to withdraw
+21653: Only admin can call this function
 27921: Only owner is allowed to withdraw
 40797: Only parent is allowed to call this function
+52504: Only admin is allowed to withdraw
 53657: 401

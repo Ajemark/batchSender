@@ -12,14 +12,14 @@
 ;;
 
 (slice, int) $BatchSender$_contract_init() impure inline_ref {
-    var (($self'deployer, $self'fee)) = (null(), null());
-    $self'deployer = __tact_context_get_sender();
+    var (($self'admin, $self'fee)) = (null(), null());
+    $self'admin = __tact_context_get_sender();
     $self'fee = 20000000;
-    return ($self'deployer, $self'fee);
+    return ($self'admin, $self'fee);
 }
 
 ((slice, int), ()) $BatchSender$_fun_SendJettonBatch((slice, int) $self, (slice, cell, int, int) $data) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
+    var (($self'admin, $self'fee)) = $self;
     var (($data'contractAddress, $data'body, $data'length, $data'amount)) = $data;
     int $totalFee = ($self'fee * $data'length);
     var ($init'code, $init'data) = $BatchJettonSender$_init_child(__tact_context_sys, __tact_context_get_sender());
@@ -27,20 +27,20 @@
     int $i = $data'length;
     while (($i > 0)) {
         cell $body = __tact_not_null(__tact_dict_get_int_cell($data'body, 257, $i));
-        $global_send($SendParameters$_constructor_to_value_mode_bounce_body($global_contractAddress(($init'code, $init'data)), 40000000, 2, true, $InternalSendJetton$_store_cell($InternalSendJetton$_constructor_contractAddress_body($data'contractAddress, $body))));
+        $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($init'code, $init'data)), 40000000, 2, true, $InternalSendJetton$_store_cell($InternalSendJetton$_constructor_contractAddress_body($data'contractAddress, $body)), $init'code, $init'data));
         $i = $i - 1;
     }
-    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'deployer, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
-    return (($self'deployer, $self'fee), ());
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'admin, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
+    return (($self'admin, $self'fee), ());
 }
 
 ((slice, int), ()) $BatchSender$_fun_sendTonBatch((slice, int) $self, (cell, cell, cell, int) $data) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
+    var (($self'admin, $self'fee)) = $self;
     var (($data'address, $data'amount, $data'comment, $data'length)) = $data;
     int $totalFee = ($self'fee * $data'length);
     int $amountPerWallet = __tact_dict_get_int_int($data'amount, 257, 1, 257);
     if (null?($amountPerWallet)) {
-        return (($self'deployer, $self'fee), ());
+        return (($self'admin, $self'fee), ());
     }
     throw_unless(14110, ($Context$_get_value(__tact_context_get()) >= ($totalFee + (__tact_not_null($amountPerWallet) * $data'length))));
     int $i = $data'length;
@@ -51,24 +51,29 @@
         $global_send($SendParameters$_constructor_to_value_mode_bounce_body($to, $amount, 2, true, $comment));
         $i = $i - 1;
     }
-    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'deployer, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
-    return (($self'deployer, $self'fee), ());
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'admin, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
+    return (($self'admin, $self'fee), ());
 }
 
 ((slice, int), int) $BatchSender$_fun_balance((slice, int) $self) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
-    return (($self'deployer, $self'fee), __tact_my_balance());
+    var (($self'admin, $self'fee)) = $self;
+    return (($self'admin, $self'fee), __tact_my_balance());
 }
 
 ((slice, int), int) $BatchSender$_fun_fee((slice, int) $self) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
-    return (($self'deployer, $self'fee), $self'fee);
+    var (($self'admin, $self'fee)) = $self;
+    return (($self'admin, $self'fee), $self'fee);
+}
+
+((slice, int), slice) $BatchSender$_fun_admin((slice, int) $self) impure inline_ref {
+    var (($self'admin, $self'fee)) = $self;
+    return (($self'admin, $self'fee), $self'admin);
 }
 
 ((slice, int), slice) $BatchSender$_fun_myJettonWalletAddress((slice, int) $self, slice $address) impure inline_ref {
-    var (($self'deployer, $self'fee)) = $self;
+    var (($self'admin, $self'fee)) = $self;
     var ($init'code, $init'data) = $BatchJettonSender$_init_child(__tact_context_sys, $address);
-    return (($self'deployer, $self'fee), $global_contractAddress(($init'code, $init'data)));
+    return (($self'admin, $self'fee), $global_contractAddress(($init'code, $init'data)));
 }
 
 ;;
@@ -76,45 +81,47 @@
 ;;
 
 (((slice, int)), ()) $BatchSender$_internal_binary_SendTon((slice, int) $self, (cell, cell, cell, int) $msg) impure inline {
-    var ($self'deployer, $self'fee) = $self;
+    var ($self'admin, $self'fee) = $self;
     var ($msg'address, $msg'amount, $msg'comment, $msg'length) = $msg;
-    ($self'deployer, $self'fee)~$BatchSender$_fun_sendTonBatch($SendTon$_tensor_cast(($msg'address, $msg'amount, $msg'comment, $msg'length)));
-    return (($self'deployer, $self'fee), ());
+    ($self'admin, $self'fee)~$BatchSender$_fun_sendTonBatch($SendTon$_tensor_cast(($msg'address, $msg'amount, $msg'comment, $msg'length)));
+    return (($self'admin, $self'fee), ());
 }
 
 (((slice, int)), ()) $BatchSender$_internal_binary_SetFee((slice, int) $self, (int) $msg) impure inline {
-    var ($self'deployer, $self'fee) = $self;
+    var ($self'admin, $self'fee) = $self;
     var ($msg'fee) = $msg;
-    $self'fee = $msg'fee;
-    return (($self'deployer, $self'fee), ());
+    throw_unless(21653, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    $self'fee = ($msg'fee / 100);
+    return (($self'admin, $self'fee), ());
 }
 
 (((slice, int)), ()) $BatchSender$_internal_binary_SendJetton((slice, int) $self, (slice, cell, int, int) $msg) impure inline {
-    var ($self'deployer, $self'fee) = $self;
+    var ($self'admin, $self'fee) = $self;
     var ($msg'contractAddress, $msg'body, $msg'length, $msg'amount) = $msg;
-    ($self'deployer, $self'fee)~$BatchSender$_fun_SendJettonBatch($SendJetton$_tensor_cast(($msg'contractAddress, $msg'body, $msg'length, $msg'amount)));
-    return (($self'deployer, $self'fee), ());
+    ($self'admin, $self'fee)~$BatchSender$_fun_SendJettonBatch($SendJetton$_tensor_cast(($msg'contractAddress, $msg'body, $msg'length, $msg'amount)));
+    return (($self'admin, $self'fee), ());
 }
 
 (((slice, int)), ()) $BatchSender$_internal_binary_ChangeContractOwner((slice, int) $self, (slice) $msg) impure inline {
-    var ($self'deployer, $self'fee) = $self;
+    var ($self'admin, $self'fee) = $self;
     var ($msg'newOwner) = $msg;
-    $self'deployer = $msg'newOwner;
-    return (($self'deployer, $self'fee), ());
+    throw_unless(21653, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
+    $self'admin = $msg'newOwner;
+    return (($self'admin, $self'fee), ());
 }
 
 ((slice, int), ()) $BatchSender$_internal_text_beb2935a82089b154d32f99c4377aa960aa115366cc2c602755e36b97f505cec((slice, int) $self) impure inline {
-    var ($self'deployer, $self'fee) = $self;
-    throw_unless(15509, ( __tact_slice_eq_bits($self'deployer, __tact_context_get_sender()) ));
+    var ($self'admin, $self'fee) = $self;
+    throw_unless(52504, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
     $global_send($SendParameters$_constructor_to_bounce_value_mode(__tact_context_get_sender(), true, ((__tact_my_balance() - $Context$_get_value(__tact_context_get())) - 10000000), (64 + 2)));
-    return (($self'deployer, $self'fee), ());
+    return (($self'admin, $self'fee), ());
 }
 
 (((slice, int)), ()) $BatchSender$_internal_binary_Deploy((slice, int) $self, (int) $deploy) impure inline {
-    var ($self'deployer, $self'fee) = $self;
+    var ($self'admin, $self'fee) = $self;
     var ($deploy'queryId) = $deploy;
-    ($self'deployer, $self'fee)~$BatchSender$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
-    return (($self'deployer, $self'fee), ());
+    ($self'admin, $self'fee)~$BatchSender$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'admin, $self'fee), ());
 }
 
 ;;
@@ -130,6 +137,12 @@ _ %balance() method_id(104128) {
 _ %fee() method_id(123159) {
     var self = $BatchSender$_contract_load();
     var res = self~$BatchSender$_fun_fee();
+    return res;
+}
+
+_ %admin() method_id(116046) {
+    var self = $BatchSender$_contract_load();
+    var res = self~$BatchSender$_fun_admin();
     return res;
 }
 
@@ -151,7 +164,7 @@ _ supported_interfaces() method_id {
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmexhSZiiXM45LinXsn1GKUKDvEqpV9ccsUswcGC189W38";
+    return "ipfs://QmbWRmqkWLKKg7bSHNSZdZboofNnT1KyYc7K5fjceKjgxK";
 }
 
 _ lazy_deployment_completed() method_id {

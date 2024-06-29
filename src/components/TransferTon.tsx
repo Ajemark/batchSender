@@ -14,26 +14,42 @@ import { useBatchSenderContract } from "../hooks/useBatchContract";
 import { useTonClient } from "../hooks/useTonClient";
 import { storeJettonTransferMessage } from "../contracts/jetton/jetton-wallet";
 import { TransferJetton } from "./TransferJetton";
+import { getContractData } from "../utils/utils";
 
 export function TransferTon() {
   const senderAddress = useTonAddress();
   const [jettonContractAddress, setJettonContractAddress] = useState("");
   const [jettonWalletAddress, setJettonWalletAddress] = useState("");
   const [caJettonWalletAddress, setCAJettonWalletAddress]: any = useState();
+  const [newOwner, setNewOwner]: any = useState("");
+  const [newFee, setNewFee]: any = useState(0);
 
   const tonClient = useTonClient();
 
-  const { connected } = useTonConnect();
+  const { connected, sender } = useTonConnect();
 
-  const { sendBatchTon, sendBatchJetton, caAddress, myJettonAddress } =
-    useBatchSenderContract();
+  const {
+    sendBatchTon,
+    sendBatchJetton,
+    sendChangeAdmin,
+    sendChangeFee,
+    myJettonAddress,
+    admin,
+  } = useBatchSenderContract();
 
   const [tonAmount, setTonAmount] = useState(0);
   const [comment, setComment] = useState("");
+  const [adminAddress, setAdminAddress]: any = useState();
   const [tonRecipient, setTonRecipient]: any = useState();
-  const [formError, setformError] = useState(false);
+  const [formError, setformError]: any = useState();
 
   const updateInfo = async () => {
+    getContractData(
+      "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ",
+      tonClient.client
+    );
+
+    setAdminAddress((await admin())?.toRawString());
     // if (!senderAddress) alert("Kindly Connect Wallet!!");
     if (!(await myJettonAddress(senderAddress))) return;
 
@@ -103,9 +119,9 @@ export function TransferTon() {
   const [type, setType] = useState("Ton");
 
   const sendTon = async function name() {
-    setformError(false);
+    setformError();
     if (tonAmount == 0 || tonRecipient == "") {
-      setformError(true);
+      setformError("Enter All Fields");
       return;
     }
     tonRecipient &&
@@ -127,13 +143,13 @@ export function TransferTon() {
   };
 
   const sendJetton = async function name() {
-    setformError(false);
+    setformError();
     if (tonAmount < 1 || tonRecipient == "") {
-      setformError(true);
+      setformError("Enter All Fields");
       return;
     }
     if (jettonContractAddress == "") {
-      setformError(true);
+      setformError("Enter All Fields");
       return;
     }
 
@@ -267,10 +283,71 @@ export function TransferTon() {
           SPRAY
         </Button>
       </FlexBoxCol>
+
+      {(senderAddress && Address.parse(senderAddress).toRawString()) ==
+        adminAddress && (
+        <div className="py-10 pb-2">
+          <p className="pt-10 pb-5 text-center text-2xl">Admin Section</p>
+          <div className="flex w-full   flex-col ">
+            <div className="flex">
+              <p className="flex-1">New Owner</p>
+              <div className="w-full my-2 flex border-[3px] overflow-hidden border-[#2eaddc] rounded-md  md:w-[500px]  ">
+                <input
+                  className="w-full outline-none ring-0 p-2 flex-1"
+                  type="text"
+                  placeholder="Enter New Owner"
+                  value={newOwner}
+                  onChange={(e) => setNewOwner(e.target.value)}
+                />
+                <button
+                  className="bg-[#2eaddc] px-4 py-2"
+                  onClick={() => {
+                    setformError();
+                    if (newOwner == "") {
+                      setformError("Enter Owner Address");
+                      return;
+                    }
+                    sendChangeAdmin(newOwner);
+                  }}
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+
+            <div className="flex">
+              <p className="flex-1">New Fee</p>
+
+              <div className="w-full flex border-[3px] my-2 overflow-hidden border-[#2eaddc] rounded-md  md:w-[500px]  ">
+                <input
+                  className="w-full outline-none ring-0 p-2 flex-1"
+                  type="number"
+                  id="amount"
+                  placeholder="Enter New Fee"
+                  value={newFee}
+                  onChange={(e) => setNewFee(e.target.value)}
+                />
+                <button
+                  className="bg-[#2eaddc] px-4 py-2"
+                  onClick={() => {
+                    setformError();
+                    if (newOwner == "") {
+                      setformError("Enter New Fee");
+                      return;
+                    }
+                    sendChangeFee(newFee);
+                  }}
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {formError && (
-        <p style={{ color: "red", textAlign: "center" }}>
-          Please Enter all fields
-        </p>
+        <p style={{ color: "red", textAlign: "center" }}>{formError}</p>
       )}
     </div>
   );

@@ -7,8 +7,10 @@ import { CHAIN } from "@tonconnect/protocol";
 import { Address, OpenedContract, toNano } from "ton-core";
 import {
   BatchSender,
+  ChangeContractOwner,
   SendJetton,
   SendTon,
+  SetFee,
 } from "../contracts/BatchSender/tact_BatchSender";
 
 export function useBatchSenderContract() {
@@ -20,18 +22,24 @@ export function useBatchSenderContract() {
     const contract = BatchSender.fromAddress(
       Address.parse(
         network === CHAIN.MAINNET
-          ? "EQDH5csTrWj6l7k86FuPaoeXwzGjFPu67wOoKPHrqd4vOX59"
+          ? "EQAbmhcu7ywk5Qg96MxINm3HBT2JzxU3kXBGD9sExPtkgspy"
           : "kQBJ771xdp_fe8ZsO1bARi3LRATLY_HbUA399LSUs_5aH6w6"
       )
     );
+    // mainnet ? "EQDH5csTrWj6l7k86FuPaoeXwzGjFPu67wOoKPHrqd4vOX59"
     // : "EQCnvlf4yVIuQtIrv278kiAhRRalEXJVMHZ20iiVLd42Zad5"
     return client.open(contract) as OpenedContract<BatchSender>;
   }, [client]);
 
   return {
     caAddress: batchSenderContract?.address.toString(),
-    myJettonAddress: (address: string) =>
-      batchSenderContract?.getMyJettonWalletAddress(Address.parse(address)),
+    myJettonAddress: (address: string) => {
+      if (!address) return null;
+      return batchSenderContract?.getMyJettonWalletAddress(
+        Address.parse(address)
+      );
+    },
+    admin: async () => await batchSenderContract?.getAdmin(),
     sendBatchTon: (data: any) => {
       const message: SendTon = {
         $$type: "SendTon",
@@ -42,6 +50,20 @@ export function useBatchSenderContract() {
       };
 
       batchSenderContract?.send(sender, { value: data.value }, message);
+    },
+    sendChangeAdmin: (data: any) => {
+      const message: ChangeContractOwner = {
+        $$type: "ChangeContractOwner",
+        newOwner: Address.parse(data),
+      };
+      batchSenderContract?.send(sender, { value: toNano(0.05) }, message);
+    },
+    sendChangeFee: (data: any) => {
+      const message: SetFee = {
+        $$type: "SetFee",
+        fee: BigInt(data),
+      };
+      batchSenderContract?.send(sender, { value: toNano(0.05) }, message);
     },
     sendBatchJetton: (data: any) => {
       console.log(data.value);

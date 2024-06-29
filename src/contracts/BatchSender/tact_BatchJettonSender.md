@@ -104,7 +104,8 @@ Total Get Methods: 1
 136: Invalid address
 137: Masterchain support is not enabled for this contract
 14110: 400
-15509: Only deployer is allowed to withdraw
+21653: Only admin can call this function
 27921: Only owner is allowed to withdraw
 40797: Only parent is allowed to call this function
+52504: Only admin is allowed to withdraw
 53657: 401

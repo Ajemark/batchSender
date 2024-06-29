@@ -78,6 +78,7 @@ async function readJettonWalletMedata(client: TonClient, address: string) {
     Address.parse(address),
     "get_wallet_data"
   );
+  console.log(walletData);
   walletData.stack.skip(2);
   return readJettonMetadata(client, walletData.stack.readAddress().toString());
 }
@@ -229,12 +230,8 @@ async function parseJettonOffchainMetadata(contentSlice: Slice): Promise<{
   };
 }
 
-export async function getContractData(address: string) {
-  const endpoint = await getHttpEndpoint({ network: "testnet" });
-  const client = new TonClient({ endpoint });
-  const jettonData = await readJettonMetadata(client, address);
-  const nftData = await readNftMetadata(client, address);
-
+export async function getContractData(address: string, client: any) {
+  if (!client) return;
   const jettonWalletData = await readJettonWalletMedata(client, address);
   console.log(jettonWalletData);
   // console.log(nftData)
