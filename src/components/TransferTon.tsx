@@ -170,8 +170,8 @@ export function TransferTon() {
                 destination: Address.parse(d),
                 responseDestination: Address.parse(senderAddress),
                 customPayload: null,
-                forwardAmount: 0n,
-                forwardPayload: null,
+                forwardAmount: toNano("0.001"),
+                forwardPayload: commentBody,
               })
             )
             .endCell();
