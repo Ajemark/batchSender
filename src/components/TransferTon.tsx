@@ -183,7 +183,7 @@ export function TransferTon() {
 
     sendBatchJetton({
       value:
-        BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.11),
+        BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.111),
       amount:
         BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.01),
       body,
