@@ -23,6 +23,7 @@ PROGRAM{
   DECLPROC $BatchJettonSender$_contract_store
   DECLPROC $global_send
   DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce
   DECLPROC $BatchJettonSender$_fun_SendJettonBatch
   DECLPROC $BatchJettonSender$_fun_balance
   DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
@@ -304,18 +305,30 @@ PROGRAM{
     PUSHNULL
     PUSHNULL
   }>
+  $SendParameters$_constructor_to_value_mode_bounce PROCINLINE:<{
+    3 -ROLL
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
+  }>
   $BatchJettonSender$_fun_SendJettonBatch PROCREF:<{
     40797 PUSHINT
     __tact_context_get_sender INLINECALLDICT
     s5 s(-1) PUXC
     __tact_slice_eq_bits INLINECALLDICT
     THROWANYIFNOT
-    50000000 PUSHINT
+    70000000 PUSHINT
     2 PUSHINT
     ROT
     TRUE
     SWAP
     $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+    OVER
+    100000 PUSHINT
+    66 PUSHINT
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
     $global_send INLINECALLDICT
   }>
   $BatchJettonSender$_fun_balance PROCREF:<{
@@ -403,7 +416,7 @@ PROGRAM{
     209474421377847335869795010607481022628 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d533557394c75727741596f574853594a4d32327562586764666a51634d6638744763784e796d797043486336} PUSHSLICE
+    x{697066733a2f2f516d5a486743774c32714a48764651796f43346e5272375a5763525356754d5155464e43755461524c4b76464667} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH

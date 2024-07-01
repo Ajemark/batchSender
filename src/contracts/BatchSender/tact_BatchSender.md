@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: BatchSender
-BOC Size: 1707 bytes
+BOC Size: 1708 bytes
 
 # Types
 Total Types: 17
@@ -115,4 +115,3 @@ Argument: address
 27921: Only owner is allowed to withdraw
 40797: Only parent is allowed to call this function
 52504: Only admin is allowed to withdraw
-53657: 401

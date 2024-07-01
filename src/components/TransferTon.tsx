@@ -35,22 +35,21 @@ export function TransferTon() {
     sendChangeFee,
     myJettonAddress,
     admin,
+    fee,
   } = useBatchSenderContract();
 
   const [tonAmount, setTonAmount] = useState(0);
   const [comment, setComment] = useState("");
   const [adminAddress, setAdminAddress]: any = useState();
+  const [feeAmount, setFeeAmount]: any = useState();
   const [tonRecipient, setTonRecipient]: any = useState();
   const [formError, setformError]: any = useState();
 
+  console.log(feeAmount);
   const updateInfo = async () => {
-    getContractData(
-      "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ",
-      tonClient.client
-    );
-
     setAdminAddress((await admin())?.toRawString());
-    // if (!senderAddress) alert("Kindly Connect Wallet!!");
+    setFeeAmount(await fee());
+
     if (!(await myJettonAddress(senderAddress))) return;
 
     let address: Address;
@@ -64,7 +63,6 @@ export function TransferTon() {
       (await myJettonAddress(senderAddress)!).toString()
     );
 
-    console.log(caJettonWalletAddress);
     let sender: Address;
     try {
       sender = await myJettonAddress(senderAddress)!;
@@ -165,16 +163,17 @@ export function TransferTon() {
           message = beginCell()
             .store(
               storeJettonTransferMessage({
-                queryId: 0n,
+                queryId: BigInt(i + 1),
                 amount: toNano(tonAmount.toString()),
-                destination: Address.parse(d),
+                destination: Address.parse(d.trim()),
                 responseDestination: Address.parse(senderAddress),
                 customPayload: null,
-                forwardAmount: toNano("0.001"),
+                forwardAmount: toNano("0.005"),
                 forwardPayload: commentBody,
               })
             )
             .endCell();
+          console.log(message);
           if (message) body.set(BigInt(i + 1), message);
         } catch (e) {
           console.log(e);
@@ -183,7 +182,8 @@ export function TransferTon() {
 
     sendBatchJetton({
       value:
-        BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.111),
+        BigInt(tonRecipient && tonRecipient.split("\n").length) *
+        (toNano(0.07) + feeAmount),
       amount:
         BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.01),
       body,
@@ -352,3 +352,9 @@ export function TransferTon() {
     </div>
   );
 }
+
+// UQBwXDv8VL47SkGVkmFboYI6PKtSu-_HwwXVoPRMZuqdP6q5
+// UQBsped2sZweDARQASEg8yMRJPJFOhFwXvjstqmWWroGrkt5
+// UQBr5s7-I7kpEuBQPXrBCgchfNTpQJrD-hElR3l0Bok-yIZl
+
+// EQAmQGimKRrSHDLllvdUdeDsX1CszGy_SPgNNN8wE2ihIwnP CA

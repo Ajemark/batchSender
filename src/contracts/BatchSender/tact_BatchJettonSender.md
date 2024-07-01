@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: BatchJettonSender
-BOC Size: 1054 bytes
+BOC Size: 1071 bytes
 
 # Types
 Total Types: 17
@@ -108,4 +108,3 @@ Total Get Methods: 1
 27921: Only owner is allowed to withdraw
 40797: Only parent is allowed to call this function
 52504: Only admin is allowed to withdraw
-53657: 401

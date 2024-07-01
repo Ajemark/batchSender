@@ -22,10 +22,11 @@ export function useBatchSenderContract() {
     const contract = BatchSender.fromAddress(
       Address.parse(
         network === CHAIN.MAINNET
-          ? "EQAbmhcu7ywk5Qg96MxINm3HBT2JzxU3kXBGD9sExPtkgspy"
+          ? "EQA3EirY_KADnGgxBJJ4HiLIkBdpo9KenrS7fTJ9NBP_4NwU"
           : "kQBJ771xdp_fe8ZsO1bARi3LRATLY_HbUA399LSUs_5aH6w6"
       )
     );
+    // mainnet 2? "EQAbmhcu7ywk5Qg96MxINm3HBT2JzxU3kXBGD9sExPtkgspy"
     // mainnet ? "EQDH5csTrWj6l7k86FuPaoeXwzGjFPu67wOoKPHrqd4vOX59"
     // : "EQCnvlf4yVIuQtIrv278kiAhRRalEXJVMHZ20iiVLd42Zad5"
     return client.open(contract) as OpenedContract<BatchSender>;
@@ -40,6 +41,7 @@ export function useBatchSenderContract() {
       );
     },
     admin: async () => await batchSenderContract?.getAdmin(),
+    fee: async () => await batchSenderContract?.getFee(),
     sendBatchTon: (data: any) => {
       const message: SendTon = {
         $$type: "SendTon",

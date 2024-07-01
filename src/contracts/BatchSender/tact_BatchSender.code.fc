@@ -23,14 +23,14 @@
     var (($data'contractAddress, $data'body, $data'length, $data'amount)) = $data;
     int $totalFee = ($self'fee * $data'length);
     var ($init'code, $init'data) = $BatchJettonSender$_init_child(__tact_context_sys, __tact_context_get_sender());
-    throw_unless(53657, ($Context$_get_value(__tact_context_get()) >= ($totalFee + $data'amount)));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'admin, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
     int $i = $data'length;
     while (($i > 0)) {
         cell $body = __tact_not_null(__tact_dict_get_int_cell($data'body, 257, $i));
-        $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($init'code, $init'data)), 40000000, 2, true, $InternalSendJetton$_store_cell($InternalSendJetton$_constructor_contractAddress_body($data'contractAddress, $body)), $init'code, $init'data));
+        $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($init'code, $init'data)), 70000000, 2, true, $InternalSendJetton$_store_cell($InternalSendJetton$_constructor_contractAddress_body($data'contractAddress, $body)), $init'code, $init'data));
         $i = $i - 1;
     }
-    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'admin, $totalFee, 2, true, __gen_cell_comment_a26fe7044b5bddb84b4787ee053d8d33a675bea9e1518d8da914fbb56e41e3e1()));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 100000, (2 + 64), true));
     return (($self'admin, $self'fee), ());
 }
 
@@ -164,7 +164,7 @@ _ supported_interfaces() method_id {
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmbWRmqkWLKKg7bSHNSZdZboofNnT1KyYc7K5fjceKjgxK";
+    return "ipfs://QmNhsC95USwMFduvi6oty8ntr8uJX5MT96rFMffLaFcZ7t";
 }
 
 _ lazy_deployment_completed() method_id {
