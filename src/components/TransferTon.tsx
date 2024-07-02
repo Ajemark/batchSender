@@ -186,7 +186,7 @@ export function TransferTon() {
       });
 
     sendBatchJetton({
-      value: BigInt(addresesArr.length) * (toNano(0.07) + feeAmount),
+      value: BigInt(addresesArr.length) * (toNano(0.075) + feeAmount),
       amount: BigInt(addresesArr.length) * toNano(0.01),
       body,
       length: BigInt(addresesArr.length),
