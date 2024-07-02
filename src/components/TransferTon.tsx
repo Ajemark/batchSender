@@ -158,39 +158,47 @@ export function TransferTon() {
 
     const addresesArr: any = [];
 
-    tonRecipient &&
-      tonRecipient.split("\n").map((d: any, i: number) => {
-        let message: Cell | null = null;
-        try {
-          message = beginCell()
-            .store(
-              storeJettonTransferMessage({
-                queryId: BigInt(i + 1),
-                amount: toNano(tonAmount.toString()),
-                destination: Address.parse(d.trim()),
-                responseDestination: Address.parse(senderAddress),
-                customPayload: null,
-                forwardAmount: toNano("0.005"),
-                forwardPayload: commentBody,
-              })
-            )
-            .endCell();
+    const storeBody = async () => {
+      tonRecipient &&
+        tonRecipient.split("\n").map((d: any, i: number) => {
+          let message: Cell | null = null;
+          try {
+            message = beginCell()
+              .store(
+                storeJettonTransferMessage({
+                  queryId: BigInt(i + 1),
+                  amount: toNano(tonAmount.toString()),
+                  destination: Address.parse(d.trim()),
+                  responseDestination: Address.parse(senderAddress),
+                  customPayload: null,
+                  forwardAmount: toNano("0.005"),
+                  forwardPayload: commentBody,
+                })
+              )
+              .endCell();
 
-          if (message) {
-            addresesArr.push(d.trim());
-            body.set(BigInt(i + 1), message);
+            if (message) {
+              addresesArr.push(d.trim());
+              body.set(BigInt(i + 1), message);
+            } else {
+              return "error";
+            }
+          } catch (e) {
+            console.log(e);
           }
-        } catch (e) {
-          console.log(e);
-        }
-      });
+        });
+      return addresesArr;
+    };
 
-    sendBatchJetton({
-      value: BigInt(addresesArr.length) * (toNano(0.075) + feeAmount),
-      amount: BigInt(addresesArr.length) * toNano(0.01),
-      body,
-      length: BigInt(addresesArr.length),
-      jettonWalletAddress,
+    storeBody().then((res) => {
+      if (res == "error") return;
+      sendBatchJetton({
+        value: BigInt(addresesArr.length) * (toNano(0.085) + feeAmount),
+        amount: BigInt(addresesArr.length) * toNano(0.01),
+        body,
+        length: BigInt(addresesArr.length),
+        jettonWalletAddress,
+      });
     });
   };
 
