@@ -14,7 +14,6 @@ import { useBatchSenderContract } from "../hooks/useBatchContract";
 import { useTonClient } from "../hooks/useTonClient";
 import { storeJettonTransferMessage } from "../contracts/jetton/jetton-wallet";
 import { TransferJetton } from "./TransferJetton";
-import { getContractData } from "../utils/utils";
 
 export function TransferTon() {
   const senderAddress = useTonAddress();
@@ -26,7 +25,7 @@ export function TransferTon() {
 
   const tonClient = useTonClient();
 
-  const { connected, sender } = useTonConnect();
+  const { connected } = useTonConnect();
 
   const {
     sendBatchTon,
@@ -39,6 +38,7 @@ export function TransferTon() {
   } = useBatchSenderContract();
 
   const [tonAmount, setTonAmount] = useState(0);
+  const [addresses, setAddresses]: any = useState();
   const [comment, setComment] = useState("");
   const [adminAddress, setAdminAddress]: any = useState();
   const [feeAmount, setFeeAmount]: any = useState();
@@ -156,6 +156,8 @@ export function TransferTon() {
       Dictionary.Values.Cell()
     );
 
+    const addresesArr: any = [];
+
     tonRecipient &&
       tonRecipient.split("\n").map((d: any, i: number) => {
         let message: Cell | null = null;
@@ -173,21 +175,21 @@ export function TransferTon() {
               })
             )
             .endCell();
-          console.log(message);
-          if (message) body.set(BigInt(i + 1), message);
+
+          if (message) {
+            addresesArr.push(d.trim());
+            body.set(BigInt(i + 1), message);
+          }
         } catch (e) {
           console.log(e);
         }
       });
 
     sendBatchJetton({
-      value:
-        BigInt(tonRecipient && tonRecipient.split("\n").length) *
-        (toNano(0.07) + feeAmount),
-      amount:
-        BigInt(tonRecipient && tonRecipient.split("\n").length) * toNano(0.01),
+      value: BigInt(addresesArr.length) * (toNano(0.07) + feeAmount),
+      amount: BigInt(addresesArr.length) * toNano(0.01),
       body,
-      length: BigInt(tonRecipient && tonRecipient.split("\n").length),
+      length: BigInt(addresesArr.length),
       jettonWalletAddress,
     });
   };
