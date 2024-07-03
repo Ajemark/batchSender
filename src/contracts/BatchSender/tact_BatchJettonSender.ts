@@ -56,8 +56,8 @@ function storeTupleStateInit(source: StateInit) {
 
 function dictValueParserStateInit(): DictionaryValue<StateInit> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeStateInit(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeStateInit(src)).endCell());
     },
     parse: (src) => {
       return loadStateInit(src.loadRef().beginParse());
@@ -123,8 +123,8 @@ function storeTupleContext(source: Context) {
 
 function dictValueParserContext(): DictionaryValue<Context> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeContext(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeContext(src)).endCell());
     },
     parse: (src) => {
       return loadContext(src.loadRef().beginParse());
@@ -223,8 +223,8 @@ function storeTupleSendParameters(source: SendParameters) {
 
 function dictValueParserSendParameters(): DictionaryValue<SendParameters> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSendParameters(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeSendParameters(src)).endCell());
     },
     parse: (src) => {
       return loadSendParameters(src.loadRef().beginParse());
@@ -267,8 +267,8 @@ function storeTupleDeploy(source: Deploy) {
 
 function dictValueParserDeploy(): DictionaryValue<Deploy> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeDeploy(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeDeploy(src)).endCell());
     },
     parse: (src) => {
       return loadDeploy(src.loadRef().beginParse());
@@ -311,8 +311,8 @@ function storeTupleDeployOk(source: DeployOk) {
 
 function dictValueParserDeployOk(): DictionaryValue<DeployOk> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeDeployOk(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeDeployOk(src)).endCell());
     },
     parse: (src) => {
       return loadDeployOk(src.loadRef().beginParse());
@@ -368,8 +368,8 @@ function storeTupleFactoryDeploy(source: FactoryDeploy) {
 
 function dictValueParserFactoryDeploy(): DictionaryValue<FactoryDeploy> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeFactoryDeploy(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeFactoryDeploy(src)).endCell());
     },
     parse: (src) => {
       return loadFactoryDeploy(src.loadRef().beginParse());
@@ -425,8 +425,8 @@ function storeTupleTransfer(source: Transfer) {
 
 function dictValueParserTransfer(): DictionaryValue<Transfer> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeTransfer(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeTransfer(src)).endCell());
     },
     parse: (src) => {
       return loadTransfer(src.loadRef().beginParse());
@@ -496,8 +496,8 @@ function storeTupleMintNft(source: MintNft) {
 
 function dictValueParserMintNft(): DictionaryValue<MintNft> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeMintNft(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeMintNft(src)).endCell());
     },
     parse: (src) => {
       return loadMintNft(src.loadRef().beginParse());
@@ -540,8 +540,8 @@ function storeTupleChangeContractOwner(source: ChangeContractOwner) {
 
 function dictValueParserChangeContractOwner(): DictionaryValue<ChangeContractOwner> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(
+    serialize: (src, builder) => {
+      builder.storeRef(
         beginCell().store(storeChangeContractOwner(src)).endCell()
       );
     },
@@ -599,8 +599,8 @@ function storeTupleChangeCollectionOwner(source: ChangeCollectionOwner) {
 
 function dictValueParserChangeCollectionOwner(): DictionaryValue<ChangeCollectionOwner> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(
+    serialize: (src, builder) => {
+      builder.storeRef(
         beginCell().store(storeChangeCollectionOwner(src)).endCell()
       );
     },
@@ -658,8 +658,8 @@ function storeTupleTransferNFT(source: TransferNFT) {
 
 function dictValueParserTransferNFT(): DictionaryValue<TransferNFT> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeTransferNFT(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeTransferNFT(src)).endCell());
     },
     parse: (src) => {
       return loadTransferNFT(src.loadRef().beginParse());
@@ -718,8 +718,8 @@ function storeTupleCollectionData(source: CollectionData) {
 
 function dictValueParserCollectionData(): DictionaryValue<CollectionData> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeCollectionData(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeCollectionData(src)).endCell());
     },
     parse: (src) => {
       return loadCollectionData(src.loadRef().beginParse());
@@ -785,8 +785,8 @@ function storeTupleItemData(source: ItemData) {
 
 function dictValueParserItemData(): DictionaryValue<ItemData> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeItemData(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeItemData(src)).endCell());
     },
     parse: (src) => {
       return loadItemData(src.loadRef().beginParse());
@@ -842,8 +842,8 @@ function storeTupleInternalSendJetton(source: InternalSendJetton) {
 
 function dictValueParserInternalSendJetton(): DictionaryValue<InternalSendJetton> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(
+    serialize: (src, builder) => {
+      builder.storeRef(
         beginCell().store(storeInternalSendJetton(src)).endCell()
       );
     },
@@ -888,8 +888,8 @@ function storeTupleSetFee(source: SetFee) {
 
 function dictValueParserSetFee(): DictionaryValue<SetFee> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSetFee(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeSetFee(src)).endCell());
     },
     parse: (src) => {
       return loadSetFee(src.loadRef().beginParse());
@@ -981,8 +981,8 @@ function storeTupleSendJetton(source: SendJetton) {
 
 function dictValueParserSendJetton(): DictionaryValue<SendJetton> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSendJetton(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeSendJetton(src)).endCell());
     },
     parse: (src) => {
       return loadSendJetton(src.loadRef().beginParse());
@@ -1118,8 +1118,8 @@ function storeTupleSendTon(source: SendTon) {
 
 function dictValueParserSendTon(): DictionaryValue<SendTon> {
   return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSendTon(src)).endCell());
+    serialize: (src, builder) => {
+      builder.storeRef(beginCell().store(storeSendTon(src)).endCell());
     },
     parse: (src) => {
       return loadSendTon(src.loadRef().beginParse());
@@ -1141,10 +1141,10 @@ function initBatchJettonSender_init_args(src: BatchJettonSender_init_args) {
 
 async function BatchJettonSender_init(owner: Address) {
   const __code = Cell.fromBase64(
-    "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"
+    "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"
   );
   const __system = Cell.fromBase64(
-    "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"
+    "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"
   );
   let builder = beginCell();
   builder.storeRef(__system);
@@ -1158,7 +1158,7 @@ async function BatchJettonSender_init(owner: Address) {
 }
 
 const BatchJettonSender_errors: { [key: number]: { message: string } } = {
-  2: { message: `Stack undeflow` },
+  2: { message: `Stack underflow` },
   3: { message: `Stack overflow` },
   4: { message: `Integer overflow` },
   5: { message: `Integer out of expected range` },

@@ -30,7 +30,7 @@
         $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($init'code, $init'data)), 70000000, 2, true, $InternalSendJetton$_store_cell($InternalSendJetton$_constructor_contractAddress_body($data'contractAddress, $body)), $init'code, $init'data));
         $i = $i - 1;
     }
-    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 100000, (2 + 64), true));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 100000, 66, true));
     return (($self'admin, $self'fee), ());
 }
 
@@ -113,7 +113,7 @@
 ((slice, int), ()) $BatchSender$_internal_text_beb2935a82089b154d32f99c4377aa960aa115366cc2c602755e36b97f505cec((slice, int) $self) impure inline {
     var ($self'admin, $self'fee) = $self;
     throw_unless(52504, ( __tact_slice_eq_bits($self'admin, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_to_bounce_value_mode(__tact_context_get_sender(), true, ((__tact_my_balance() - $Context$_get_value(__tact_context_get())) - 10000000), (64 + 2)));
+    $global_send($SendParameters$_constructor_to_bounce_value_mode(__tact_context_get_sender(), true, ((__tact_my_balance() - $Context$_get_value(__tact_context_get())) - 10000000), 66));
     return (($self'admin, $self'fee), ());
 }
 
@@ -164,7 +164,7 @@ _ supported_interfaces() method_id {
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmNhsC95USwMFduvi6oty8ntr8uJX5MT96rFMffLaFcZ7t";
+    return "ipfs://QmRxERkmDbwnicJPJVPzszbAQd6HSFavp4VEW1ozeBy8Ft";
 }
 
 _ lazy_deployment_completed() method_id {

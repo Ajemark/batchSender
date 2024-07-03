@@ -79,7 +79,7 @@ Total Get Methods: 1
 ## balance
 
 # Error Codes
-2: Stack undeflow
+2: Stack underflow
 3: Stack overflow
 4: Integer overflow
 5: Integer out of expected range

@@ -161,6 +161,16 @@ export function TransferTon() {
     const storeBody = async () => {
       tonRecipient &&
         tonRecipient.split("\n").map((d: any, i: number) => {
+          if (
+            !amount ||
+            !Address.parse(d.trim()) ||
+            !commentBody ||
+            !jettonWalletAddress ||
+            !senderAddress
+          ) {
+            return "error";
+          }
+
           let message: Cell | null = null;
           try {
             message = beginCell()

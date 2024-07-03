@@ -22,7 +22,7 @@
     var (($data'contractAddress, $data'body)) = $data;
     throw_unless(40797, ( __tact_slice_eq_bits($self'parent, __tact_context_get_sender()) ));
     $global_send($SendParameters$_constructor_to_value_mode_bounce_body($data'contractAddress, 70000000, 2, true, $data'body));
-    $global_send($SendParameters$_constructor_to_value_mode_bounce($self'parent, 100000, (2 + 64), true));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($self'parent, 100000, 66, true));
     return (($self'parent, $self'owner), ());
 }
 
@@ -52,7 +52,7 @@
 ((slice, slice), ()) $BatchJettonSender$_internal_text_beb2935a82089b154d32f99c4377aa960aa115366cc2c602755e36b97f505cec((slice, slice) $self) impure inline {
     var ($self'parent, $self'owner) = $self;
     throw_unless(27921, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_to_bounce_value_mode($self'owner, true, ((__tact_my_balance() - $Context$_get_value(__tact_context_get())) - 10000000), (64 + 2)));
+    $global_send($SendParameters$_constructor_to_bounce_value_mode($self'owner, true, ((__tact_my_balance() - $Context$_get_value(__tact_context_get())) - 10000000), 66));
     return (($self'parent, $self'owner), ());
 }
 
@@ -84,7 +84,7 @@ _ supported_interfaces() method_id {
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmZHgCwL2qJHvFQyoC4nRr7ZWcRSVuMQUFNCuTaRLKvFFg";
+    return "ipfs://QmSE1kLjRYijfyKJ9VUThhmCy9XPcCZ4YmMevaSfRPaGma";
 }
 
 _ lazy_deployment_completed() method_id {
